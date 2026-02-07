@@ -8,69 +8,70 @@ APP_ICON = "🔮"
 SCENARIOS = [
     {
         "id": "backcasting",
-        "title": "Backcasting: Un futuro senza ostacoli",
+        "title": "Backcasting: Il food italiano del futuro",
         "description": (
-            "Immaginate che nel 2035 tutti i problemi che oggi frenano le aziende "
-            "italiane nell'usare l'AI siano stati risolti: ci sono abbastanza esperti, "
-            "la tecnologia è accessibile, le regole sono chiare. "
+            "Immaginate che nel 2035 ogni azienda alimentare e ristorante in Italia "
+            "usi l'AI senza problemi: menu personalizzati in base alle allergie e "
+            "ai gusti di ogni cliente, zero sprechi perche' l'AI prevede esattamente "
+            "quanto cibo servira', tracciabilita' totale dal campo alla tavola. "
             "Partendo da questo futuro perfetto, ragionate all'indietro: "
-            "cosa è successo per arrivarci? Quali scelte sono state fatte? "
-            "Come lavorano le aziende italiane in questo mondo ideale?"
+            "cosa e' successo per arrivarci? Quali scelte sono state fatte? "
+            "Come funzionano ristoranti e aziende food in questo mondo ideale?"
         ),
         "keywords": [
-            "futuro ideale", "nessun ostacolo",
-            "aziende italiane", "AI accessibile", "2035",
+            "futuro ideale", "zero sprechi", "menu personalizzati",
+            "tracciabilita'", "ristoranti", "food italiano", "2035",
         ],
     },
     {
         "id": "trend_analysis",
-        "title": "Trend Analysis: Supercalcolo per tutti",
+        "title": "Trend Analysis: AI per creare nuovi cibi",
         "description": (
-            "Oggi i supercomputer più potenti (come Leonardo a Bologna) sono usati "
-            "soprattutto da università e centri di ricerca. "
-            "Immaginate che nel 2035 anche le aziende normali possano usare questi "
-            "supercomputer per addestrare i propri modelli AI, grazie a un sistema "
-            "condiviso tra pubblico e privato. "
-            "Come cambierebbe la situazione per le aziende italiane? "
-            "Chi ne beneficerebbe di più? Quali rischi ci sarebbero?"
+            "Oggi i supercomputer piu' potenti vengono usati soprattutto "
+            "per la ricerca scientifica. Immaginate che nel 2035 le aziende "
+            "alimentari li usino per creare nuovi alimenti: simulare ricette, "
+            "inventare combinazioni di sapori mai provate, sviluppare proteine "
+            "alternative, prevedere quali prodotti piaceranno ai consumatori. "
+            "Come cambierebbe il settore food italiano? Chi ne beneficerebbe? "
+            "Che fine farebbero le ricette tradizionali?"
         ),
         "keywords": [
-            "supercomputer", "Leonardo", "condivisione",
-            "aziende", "potenza di calcolo", "2035",
+            "nuovi alimenti", "ricette AI", "proteine alternative",
+            "food design", "sapori", "innovazione alimentare", "2035",
         ],
     },
     {
         "id": "scenario_planning",
-        "title": "Scenario Planning: Dati in mano agli altri",
+        "title": "Scenario Planning: Le nostre ricette su server stranieri",
         "description": (
-            "Oggi quasi tutte le aziende italiane salvano i loro dati su servizi "
-            "cloud americani (Amazon, Google, Microsoft). "
-            "Immaginate che nel 2035 l'Europa non abbia ancora creato una vera "
-            "alternativa: tutti i dati delle aziende italiane sono ancora "
-            "nelle mani di aziende straniere. "
-            "Che conseguenze ha questo? Le aziende italiane sono più o meno "
-            "competitive? Quali rischi corrono?"
+            "Oggi le aziende food italiane usano piattaforme americane per "
+            "tutto: gestire ordini, salvare ricette, analizzare i clienti. "
+            "Immaginate che nel 2035 tutti i dati del food italiano "
+            "(ricette, fornitori, preferenze dei clienti, segreti industriali) "
+            "siano nelle mani di Amazon, Google e Microsoft. "
+            "Che conseguenze ha? Un concorrente straniero potrebbe copiare "
+            "il Made in Italy alimentare? Quali rischi corrono le aziende?"
         ),
         "keywords": [
-            "cloud", "dati", "dipendenza",
-            "sovranità digitale", "Big Tech", "2035",
+            "dati", "ricette", "segreti industriali",
+            "Made in Italy", "piattaforme straniere", "food", "2035",
         ],
     },
     {
         "id": "cross_impact",
-        "title": "Cross Impact: Talenti sì, burocrazia anche",
+        "title": "Cross Impact: Chef tecnologici ma troppa burocrazia",
         "description": (
             "Immaginate due cose che succedono insieme nel 2035: "
-            "da un lato l'Italia investe tantissimo nella formazione di esperti AI "
-            "(corsi, borse di studio, incentivi per chi torna dall'estero). "
-            "Dall'altro, la burocrazia peggiora: servono più permessi, "
-            "più documenti, più tempo per fare qualsiasi cosa. "
-            "Cosa succede quando queste due tendenze si incrociano? "
-            "Le aziende riescono a sfruttare i nuovi talenti o la burocrazia li blocca?"
+            "da un lato l'Italia forma tantissimi food technologist che sanno "
+            "usare l'AI (corsi ITS, universita', borse di studio). "
+            "Dall'altro, la burocrazia peggiora: servono piu' certificazioni, "
+            "piu' controlli, piu' tempo per lanciare un nuovo prodotto alimentare. "
+            "Cosa succede? I nuovi esperti riescono a innovare o la burocrazia "
+            "li blocca? Le aziende food italiane restano competitive?"
         ),
         "keywords": [
-            "talenti", "formazione", "burocrazia",
-            "fuga di cervelli", "regole", "2035",
+            "food technologist", "formazione ITS", "burocrazia",
+            "certificazioni", "innovazione alimentare", "2035",
         ],
     },
 ]

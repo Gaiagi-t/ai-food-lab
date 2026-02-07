@@ -160,7 +160,7 @@ if section == "1. Crea l'Assistente":
         with st.expander("Visualizza il System Prompt generato"):
             st.code(current_prompt, language=None)
 
-    # ── Generazione foto dell'Advisor ────────────────────────────────────
+    # ── Generazione foto dell'Assistente ──────────────────────────────────
     st.divider()
     st.subheader("Genera l'avatar del tuo Assistente")
 
@@ -169,32 +169,28 @@ if section == "1. Crea l'Assistente":
     if coach_image_url:
         st.image(coach_image_url, width=300, caption="Il vostro Assistente AI")
 
-    coach_config = group_data.get("coach_config") or {}
-    if coach_config:
-        st.markdown(
-            f"L'assistente e': **{coach_config.get('coach_role', '')}**, "
-            f"tono **{coach_config.get('tone_label', '')}**"
-        )
+    image_prompt = st.text_area(
+        "Descrivi come vuoi che appaia il tuo assistente AI",
+        height=100,
+        placeholder=(
+            "Es: Una chef futuristica in un laboratorio di cucina high-tech, "
+            "con un tablet in mano e ingredienti che fluttuano intorno a lei..."
+        ),
+    )
 
-        if st.button("Genera foto dell'Assistente", type="primary", use_container_width=True):
-            image_prompt = (
-                f"Professional portrait photo of {coach_config.get('coach_role', 'a tech expert')}, "
-                f"working in AI and technology in Italy in the year 2035. "
-                f"They have a {coach_config.get('tone_value', 'friendly')} demeanor. "
-                f"Modern office, high-tech environment. "
-                f"Photorealistic style, warm lighting, confident expression."
-            )
+    if st.button("Genera foto dell'Assistente", type="primary", use_container_width=True):
+        if not image_prompt.strip():
+            st.warning("Scrivi una descrizione prima di generare l'immagine!")
+        else:
             with st.spinner("L'AI sta generando l'avatar..."):
                 try:
-                    url = generate_image(image_prompt)
+                    url = generate_image(image_prompt.strip())
                     state.update_group(group_name, coach_image_url=url)
                     st.image(url, width=300, caption="Il vostro Assistente AI")
                     st.success("Avatar generato!")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Errore nella generazione dell'immagine: {e}")
-    else:
-        st.info("Prima crea il system prompt, poi potrai generare l'avatar!")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SEZIONE 2: TESTA L'ADVISOR
