@@ -130,7 +130,7 @@ with tab_results:
                     yaxis=dict(title="", dtick=1),
                     showlegend=False,
                 )
-                st.plotly_chart(fig2, use_container_width=True)
+                st.plotly_chart(fig2, use_container_width=True, key=f"dist_{q['id']}")
 
         # ── Myth Busting ──
         st.divider()

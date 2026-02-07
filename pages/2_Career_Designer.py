@@ -31,17 +31,22 @@ scenario = group_data["scenario"]
 st.title("Career Designer")
 st.markdown(f"**Gruppo:** {group_name} | **Scenario:** {scenario['title']}")
 
-# ── Tre fasi in tab ──────────────────────────────────────────────────────────
+# ── Navigazione via radio (no tabs → chat_input rimane in fondo) ─────────
 
-tab_brainstorm, tab_card, tab_feedback = st.tabs([
-    "1. Brainstorming con AI",
-    "2. Design Career Card",
-    "3. Feedback AI",
-])
+section = st.radio(
+    "Fase",
+    options=["1. Brainstorming con AI", "2. Design Career Card", "3. Feedback AI"],
+    horizontal=True,
+    label_visibility="collapsed",
+)
 
-# ── Tab 1: Brainstorming ─────────────────────────────────────────────────────
+st.divider()
 
-with tab_brainstorm:
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 1: BRAINSTORMING
+# ══════════════════════════════════════════════════════════════════════════════
+
+if section == "1. Brainstorming con AI":
     st.markdown(f"""
     ### Esplora lo scenario con l'AI
 
@@ -56,36 +61,17 @@ with tab_brainstorm:
     fatevi provocare, e trovate l'idea per un **ruolo professionale del futuro**!
     """)
 
-    # System prompt per il brainstorming
-    sys_prompt = BRAINSTORMING_SYSTEM_PROMPT.format(
-        scenario_title=scenario["title"],
-        scenario_description=scenario["description"],
-    )
-
     # Mostra la chat history
     history = state.get_brainstorm_history(group_name)
     for msg in history:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Input utente
-    if prompt := st.chat_input("Scrivi al facilitatore AI...", key="brainstorm_input"):
-        # Mostra il messaggio utente
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        state.add_brainstorm_message(group_name, "user", prompt)
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 2: CAREER CARD
+# ══════════════════════════════════════════════════════════════════════════════
 
-        # Genera risposta AI
-        messages = state.get_brainstorm_history(group_name)
-        with st.chat_message("assistant"):
-            response = st.write_stream(
-                chat_stream(sys_prompt, messages)
-            )
-        state.add_brainstorm_message(group_name, "assistant", response)
-
-# ── Tab 2: Career Card ───────────────────────────────────────────────────────
-
-with tab_card:
+elif section == "2. Design Career Card":
     st.markdown("""
     ### Progetta la Career Card
 
@@ -93,7 +79,6 @@ with tab_card:
     Pensate a un ruolo che **non esiste ancora** all'intersezione tra AI e food!
     """)
 
-    # Pre-popola con i dati salvati
     existing = group_data.get("career_card") or {}
 
     with st.form("career_card_form"):
@@ -160,17 +145,18 @@ with tab_card:
                 st.success("Career Card salvata! Ora potete chiedere il **Feedback AI**.")
                 st.balloons()
 
-# ── Tab 3: Feedback AI ───────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 3: FEEDBACK AI
+# ══════════════════════════════════════════════════════════════════════════════
 
-with tab_feedback:
+elif section == "3. Feedback AI":
     st.markdown("### Feedback AI sulla vostra Career Card")
 
-    # Ricarica i dati (potrebbero essere stati aggiornati nel tab precedente)
     group_data = state.get_group(group_name)
     card = group_data.get("career_card") if group_data else None
 
     if not card:
-        st.info("Prima compilate e salvate la **Career Card** nel tab precedente!")
+        st.info("Prima compilate e salvate la **Career Card** nella sezione 2!")
     else:
         st.markdown(f"""
         **Ruolo:** {card['role_name']}
@@ -206,3 +192,23 @@ with tab_feedback:
             st.markdown(f"**Soft Skills:** {card['soft_skills']}")
             st.markdown(f"**AI come alleata:** {card['ai_ally']}")
             st.markdown(f"**Tocco umano:** {card['human_touch']}")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHAT INPUT GLOBALE (sempre in fondo alla pagina, solo per brainstorming)
+# ══════════════════════════════════════════════════════════════════════════════
+
+if section == "1. Brainstorming con AI":
+    sys_prompt = BRAINSTORMING_SYSTEM_PROMPT.format(
+        scenario_title=scenario["title"],
+        scenario_description=scenario["description"],
+    )
+
+    if prompt := st.chat_input("Scrivi al facilitatore AI..."):
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        state.add_brainstorm_message(group_name, "user", prompt)
+
+        messages = state.get_brainstorm_history(group_name)
+        with st.chat_message("assistant"):
+            response = st.write_stream(chat_stream(sys_prompt, messages))
+        state.add_brainstorm_message(group_name, "assistant", response)

@@ -2,7 +2,7 @@
 
 import streamlit as st
 from utils.shared_state import get_shared_state
-from utils.ai_client import chat_stream
+from utils.ai_client import chat_stream, generate_image
 from utils.config import (
     COACH_SYSTEM_PROMPT_TEMPLATE,
     COACH_ROLES,
@@ -38,23 +38,25 @@ if not card:
 
 st.title("AI Lab: Crea il tuo Career Coach")
 st.markdown(
-    f"**Gruppo:** {group_name} | **Ruolo:** {card['role_name']}\n\n"
-    "Costruite un agente AI che conduce colloqui di lavoro per il ruolo "
-    "che avete progettato. Scegliete la personalità, il tono e lo stile "
-    "del vostro coach, poi testatelo!"
+    f"**Gruppo:** {group_name} | **Ruolo:** {card['role_name']}"
 )
 
-# ── Tre step in tab ──────────────────────────────────────────────────────────
+# ── Navigazione via radio (no tabs → chat_input rimane in fondo) ─────────
 
-tab_design, tab_test, tab_cross = st.tabs([
-    "1. Progetta il Coach",
-    "2. Testa il Coach",
-    "3. Prova i Coach degli altri",
-])
+section = st.radio(
+    "Sezione",
+    options=["1. Progetta il Coach", "2. Testa il Coach", "3. Prova i Coach degli altri"],
+    horizontal=True,
+    label_visibility="collapsed",
+)
 
-# ── Tab 1: Design del Coach ──────────────────────────────────────────────────
+st.divider()
 
-with tab_design:
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 1: PROGETTA IL COACH
+# ══════════════════════════════════════════════════════════════════════════════
+
+if section == "1. Progetta il Coach":
     st.markdown("""
     ### Progetta il tuo Career Coach AI
 
@@ -114,7 +116,6 @@ with tab_design:
         )
 
         if submitted:
-            # Salva la configurazione
             config = {
                 "coach_role": coach_role,
                 "tone_label": selected_tone_label,
@@ -125,7 +126,6 @@ with tab_design:
                 "custom_instructions": custom_instructions.strip(),
             }
 
-            # Assembla il system prompt
             sys_prompt = COACH_SYSTEM_PROMPT_TEMPLATE.format(
                 coach_role=coach_role,
                 career_role=card["role_name"],
@@ -136,11 +136,9 @@ with tab_design:
                 evaluation_criteria=evaluation.strip() or "Competenze tecniche, soft skills, visione innovativa",
             )
 
-            # Aggiungi istruzioni custom
             if custom_instructions.strip():
                 sys_prompt += f"\n\nISTRUZIONI AGGIUNTIVE DEL GRUPPO:\n{custom_instructions.strip()}"
 
-            # Aggiungi contesto dalla career card
             sys_prompt += (
                 f"\n\nDESCRIZIONE DEL RUOLO (dal gruppo):\n{card['description']}"
                 f"\n\nHARD SKILLS RICHIESTE:\n{card['hard_skills']}"
@@ -153,7 +151,7 @@ with tab_design:
                 coach_system_prompt=sys_prompt,
                 coach_chat_history=[],
             )
-            st.success("System prompt generato! Andate al tab **Testa il Coach** per provarlo.")
+            st.success("System prompt generato! Andate a **2. Testa il Coach** per provarlo.")
 
     # Mostra il system prompt generato
     current_prompt = group_data.get("coach_system_prompt")
@@ -161,76 +159,103 @@ with tab_design:
         with st.expander("Visualizza il System Prompt generato"):
             st.code(current_prompt, language=None)
 
-# ── Tab 2: Testa il Coach ────────────────────────────────────────────────────
+    # ── Generazione foto del Coach ───────────────────────────────────────
+    st.divider()
+    st.subheader("Genera l'avatar del tuo Coach")
 
-with tab_test:
-    # Ricarica dati aggiornati
+    # Mostra immagine esistente
+    coach_image_url = group_data.get("coach_image_url")
+    if coach_image_url:
+        st.image(coach_image_url, width=300, caption="Il vostro Career Coach AI")
+
+    coach_config = group_data.get("coach_config") or {}
+    if coach_config:
+        st.markdown(
+            f"Il coach è: **{coach_config.get('coach_role', '')}**, "
+            f"tono **{coach_config.get('tone_label', '')}**"
+        )
+
+        if st.button("Genera foto del Coach", type="primary", use_container_width=True):
+            image_prompt = (
+                f"Professional portrait photo of {coach_config.get('coach_role', 'a food tech executive')}, "
+                f"working in the food technology and AI industry in the year 2035. "
+                f"They have a {coach_config.get('tone_value', 'professional')} demeanor. "
+                f"Modern office with food tech equipment in the background. "
+                f"Photorealistic style, warm lighting, confident expression. "
+                f"The person is conducting a job interview."
+            )
+            with st.spinner("L'AI sta generando l'avatar del vostro coach..."):
+                try:
+                    url = generate_image(image_prompt)
+                    state.update_group(group_name, coach_image_url=url)
+                    st.image(url, width=300, caption="Il vostro Career Coach AI")
+                    st.success("Avatar generato!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Errore nella generazione dell'immagine: {e}")
+    else:
+        st.info("Prima genera il system prompt del coach, poi potrai generare il suo avatar!")
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 2: TESTA IL COACH
+# ══════════════════════════════════════════════════════════════════════════════
+
+elif section == "2. Testa il Coach":
     group_data = state.get_group(group_name)
     coach_prompt = group_data.get("coach_system_prompt") if group_data else None
 
     if not coach_prompt:
-        st.info("Prima **progettate il coach** nel tab precedente!")
+        st.info("Prima **progettate il coach** nella sezione 1!")
         st.stop()
 
-    st.markdown(f"""
-    ### Testa il tuo Career Coach
+    # Mostra avatar se disponibile
+    coach_image_url = group_data.get("coach_image_url")
 
-    Il vostro coach è pronto! Provate a "candidarvi" per il ruolo di **{card['role_name']}**.
-    Il coach vi farà un vero colloquio di lavoro.
+    col_header, col_avatar = st.columns([3, 1])
+    with col_header:
+        st.markdown(f"""
+        ### Testa il tuo Career Coach
 
-    *Potete tornare al tab precedente per modificare il system prompt e vedere come cambia il comportamento!*
-    """)
-
-    col_chat, col_info = st.columns([3, 1])
-
-    with col_info:
-        st.markdown("**Suggerimenti:**")
+        Provate a "candidarvi" per il ruolo di **{card['role_name']}**.
+        Il coach vi farà un vero colloquio di lavoro.
+        """)
         st.markdown(
-            "- Presentatevi al coach\n"
-            "- Rispondete alle domande\n"
-            "- Provate a dare risposte vaghe: come reagisce?\n"
-            "- Provate a cambiare argomento: vi riporta al tema?\n"
-            "- Notate dove il coach 'alucina' o dice cose sbagliate"
+            "**Suggerimenti:** Presentatevi • Rispondete alle domande • "
+            "Provate risposte vaghe • Cambiate argomento • Notate le 'allucinazioni'"
         )
-        if st.button("Ricomincia il colloquio", use_container_width=True):
-            state.set_coach_chat_history(group_name, [])
-            st.rerun()
+    with col_avatar:
+        if coach_image_url:
+            st.image(coach_image_url, width=150)
 
-    with col_chat:
-        # Mostra history
-        history = state.get_coach_chat_history(group_name)
-        for msg in history:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+    if st.button("Ricomincia il colloquio", use_container_width=True):
+        state.set_coach_chat_history(group_name, [])
+        st.rerun()
 
-        # Se la chat è vuota, il coach si presenta
-        if not history:
-            with st.chat_message("assistant"):
-                intro = st.write_stream(
-                    chat_stream(
-                        coach_prompt,
-                        [{"role": "user", "content": "Buongiorno, sono qui per il colloquio."}],
-                    )
+    st.divider()
+
+    # Mostra chat history
+    history = state.get_coach_chat_history(group_name)
+    for msg in history:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # Se la chat è vuota, il coach si presenta
+    if not history:
+        with st.chat_message("assistant"):
+            intro = st.write_stream(
+                chat_stream(
+                    coach_prompt,
+                    [{"role": "user", "content": "Buongiorno, sono qui per il colloquio."}],
                 )
-            state.add_coach_message(group_name, "user", "Buongiorno, sono qui per il colloquio.")
-            state.add_coach_message(group_name, "assistant", intro)
+            )
+        state.add_coach_message(group_name, "user", "Buongiorno, sono qui per il colloquio.")
+        state.add_coach_message(group_name, "assistant", intro)
 
-        # Input candidato
-        if user_input := st.chat_input("Rispondi al coach...", key="coach_test_input"):
-            with st.chat_message("user"):
-                st.markdown(user_input)
-            state.add_coach_message(group_name, "user", user_input)
+# ══════════════════════════════════════════════════════════════════════════════
+# SEZIONE 3: CROSS-TEST
+# ══════════════════════════════════════════════════════════════════════════════
 
-            messages = state.get_coach_chat_history(group_name)
-            with st.chat_message("assistant"):
-                response = st.write_stream(
-                    chat_stream(coach_prompt, messages)
-                )
-            state.add_coach_message(group_name, "assistant", response)
-
-# ── Tab 3: Cross-test ────────────────────────────────────────────────────────
-
-with tab_cross:
+elif section == "3. Prova i Coach degli altri":
     st.markdown("""
     ### Prova i Coach degli altri gruppi
 
@@ -246,50 +271,80 @@ with tab_cross:
 
     if not other_groups:
         st.info("Nessun altro gruppo ha ancora creato il proprio coach. Aspettate un momento!")
-    else:
-        selected_group = st.selectbox(
-            "Scegli un gruppo da provare",
-            options=list(other_groups.keys()),
-            format_func=lambda x: f"{x} — {other_groups[x]['career_card']['role_name']}" if other_groups[x].get("career_card") else x,
-        )
+        st.stop()
 
-        if selected_group:
-            other_data = other_groups[selected_group]
-            other_card = other_data.get("career_card", {})
-            other_prompt = other_data["coach_system_prompt"]
+    selected_group = st.selectbox(
+        "Scegli un gruppo da provare",
+        options=list(other_groups.keys()),
+        format_func=lambda x: f"{x} — {other_groups[x]['career_card']['role_name']}" if other_groups[x].get("career_card") else x,
+    )
 
+    if selected_group:
+        other_data = other_groups[selected_group]
+        other_card = other_data.get("career_card", {})
+
+        col_info, col_avatar = st.columns([3, 1])
+        with col_info:
             st.markdown(
                 f"**Ruolo:** {other_card.get('role_name', 'N/D')} | "
                 f"**Scenario:** {other_data['scenario']['title']}"
             )
+        with col_avatar:
+            other_image = other_data.get("coach_image_url")
+            if other_image:
+                st.image(other_image, width=100)
 
-            # Chat separata per il cross-test (usa session_state locale)
-            cross_key = f"cross_chat_{selected_group}"
-            if cross_key not in st.session_state:
-                st.session_state[cross_key] = []
+        cross_key = f"cross_chat_{selected_group}"
+        if cross_key not in st.session_state:
+            st.session_state[cross_key] = []
 
-            for msg in st.session_state[cross_key]:
-                with st.chat_message(msg["role"]):
-                    st.markdown(msg["content"])
+        if st.button("Ricomincia", key=f"reset_{selected_group}"):
+            st.session_state[cross_key] = []
+            st.rerun()
 
-            if st.button("Ricomincia", key=f"reset_{selected_group}"):
-                st.session_state[cross_key] = []
-                st.rerun()
+        st.divider()
 
-            if cross_input := st.chat_input(
-                f"Parla con il coach di {selected_group}...",
-                key=f"cross_input_{selected_group}",
-            ):
-                with st.chat_message("user"):
-                    st.markdown(cross_input)
-                st.session_state[cross_key].append(
-                    {"role": "user", "content": cross_input}
+        for msg in st.session_state[cross_key]:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CHAT INPUT GLOBALE (sempre in fondo alla pagina)
+# ══════════════════════════════════════════════════════════════════════════════
+
+if section == "2. Testa il Coach":
+    group_data = state.get_group(group_name)
+    coach_prompt = group_data.get("coach_system_prompt") if group_data else None
+
+    if coach_prompt:
+        if user_input := st.chat_input("Rispondi al coach..."):
+            with st.chat_message("user"):
+                st.markdown(user_input)
+            state.add_coach_message(group_name, "user", user_input)
+
+            messages = state.get_coach_chat_history(group_name)
+            with st.chat_message("assistant"):
+                response = st.write_stream(chat_stream(coach_prompt, messages))
+            state.add_coach_message(group_name, "assistant", response)
+
+elif section == "3. Prova i Coach degli altri":
+    all_groups = state.get_all_groups()
+    other_groups = {
+        name: data for name, data in all_groups.items()
+        if name != group_name and data.get("coach_system_prompt")
+    }
+
+    if other_groups and selected_group:
+        other_prompt = other_groups[selected_group]["coach_system_prompt"]
+        cross_key = f"cross_chat_{selected_group}"
+
+        if cross_input := st.chat_input(f"Parla con il coach di {selected_group}..."):
+            with st.chat_message("user"):
+                st.markdown(cross_input)
+            st.session_state[cross_key].append({"role": "user", "content": cross_input})
+
+            with st.chat_message("assistant"):
+                response = st.write_stream(
+                    chat_stream(other_prompt, st.session_state[cross_key])
                 )
-
-                with st.chat_message("assistant"):
-                    response = st.write_stream(
-                        chat_stream(other_prompt, st.session_state[cross_key])
-                    )
-                st.session_state[cross_key].append(
-                    {"role": "assistant", "content": response}
-                )
+            st.session_state[cross_key].append({"role": "assistant", "content": response})

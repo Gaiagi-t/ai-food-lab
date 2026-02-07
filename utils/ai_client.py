@@ -74,6 +74,27 @@ def _chat_openai(system_prompt: str, messages: list[dict], max_tokens: int) -> s
     return response.choices[0].message.content
 
 
+def generate_image(prompt: str, size: str = "1024x1024") -> str:
+    """Genera un'immagine con DALL-E 3 e ritorna l'URL.
+
+    Args:
+        prompt: Descrizione dell'immagine da generare.
+        size: Dimensione ("1024x1024", "1024x1792", "1792x1024").
+
+    Returns:
+        URL dell'immagine generata.
+    """
+    client = _get_openai()
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=prompt,
+        size=size,
+        n=1,
+        quality="standard",
+    )
+    return response.data[0].url
+
+
 def chat_stream(
     system_prompt: str,
     messages: list[dict],

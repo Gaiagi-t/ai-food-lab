@@ -49,6 +49,11 @@ if view == "Vista Docente (da proiettare)":
 
         with cols[i % len(cols)]:
             with st.container(border=True):
+                # Avatar del coach
+                coach_image = data.get("coach_image_url")
+                if coach_image:
+                    st.image(coach_image, width=200)
+
                 st.markdown(f"### {card['role_name']}")
                 st.caption(f"Gruppo: **{name}** | Scenario: *{scenario['title']}*")
                 st.markdown(f"**Descrizione:** {card['description'][:200]}{'...' if len(card['description']) > 200 else ''}")
