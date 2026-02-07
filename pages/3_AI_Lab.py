@@ -1,4 +1,4 @@
-"""Pagina 3: AI Lab - Crea il tuo Policy Advisor AI."""
+"""Pagina 3: AI Lab - Crea il tuo Assistente AI."""
 
 import streamlit as st
 from utils.shared_state import get_shared_state
@@ -11,7 +11,7 @@ from utils.config import (
     APP_ICON,
 )
 
-st.set_page_config(page_title="AI Lab - Policy Advisor", page_icon=APP_ICON, layout="wide")
+st.set_page_config(page_title="AI Lab", page_icon=APP_ICON, layout="wide")
 
 state = get_shared_state()
 
@@ -32,11 +32,11 @@ card = group_data.get("scenario_card")
 if not card:
     st.warning(
         "Prima completate la **Scenario Card** nella pagina Scenari 2035! "
-        "L'advisor discuterà lo scenario che avete progettato."
+        "L'assistente discutera' lo scenario che avete creato."
     )
     st.stop()
 
-st.title("AI Lab: Crea il tuo Policy Advisor")
+st.title("AI Lab: Crea il tuo Assistente AI")
 st.markdown(
     f"**Gruppo:** {group_name} | **Scenario:** {card['scenario_title_custom']}"
 )
@@ -45,7 +45,7 @@ st.markdown(
 
 section = st.radio(
     "Sezione",
-    options=["1. Progetta l'Advisor", "2. Testa l'Advisor", "3. Prova gli Advisor degli altri"],
+    options=["1. Crea l'Assistente", "2. Provalo", "3. Prova quelli degli altri"],
     horizontal=True,
     label_visibility="collapsed",
 )
@@ -56,59 +56,59 @@ st.divider()
 # SEZIONE 1: PROGETTA L'ADVISOR
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "1. Progetta l'Advisor":
+if section == "1. Crea l'Assistente":
     st.markdown("""
-    ### Progetta il tuo Policy Advisor AI
+    ### Crea il tuo Assistente AI
 
-    Configurate la personalità e il comportamento del vostro agente AI.
-    L'app assemblerà automaticamente il **system prompt** dalle vostre scelte.
+    Scegliete chi sara' il vostro assistente AI e come si comportera'.
+    L'app creera' il **system prompt** dalle vostre scelte.
     """)
 
     existing_config = group_data.get("coach_config") or {}
 
     with st.form("coach_config_form"):
         coach_role = st.selectbox(
-            "Chi è l'advisor?",
+            "Chi sara' il vostro assistente?",
             options=COACH_ROLES,
             index=COACH_ROLES.index(existing_config["coach_role"]) if existing_config.get("coach_role") in COACH_ROLES else 0,
         )
 
         tone_labels = [t[0] for t in COACH_TONES]
         selected_tone_label = st.selectbox(
-            "Tono e personalità",
+            "Come parla?",
             options=tone_labels,
             index=tone_labels.index(existing_config["tone_label"]) if existing_config.get("tone_label") in tone_labels else 0,
         )
         tone_value = dict(COACH_TONES)[selected_tone_label]
 
         question_types = st.multiselect(
-            "Tipo di domande che l'advisor deve fare",
+            "Che tipo di domande deve fare?",
             options=COACH_QUESTION_TYPES,
             default=existing_config.get("question_types", COACH_QUESTION_TYPES[:2]),
         )
 
         knowledge = st.text_area(
-            "Conoscenze specifiche dell'advisor",
+            "Di cosa e' esperto il vostro assistente?",
             value=existing_config.get("knowledge", ""),
             height=80,
-            placeholder="Es: Esperto di politiche industriali europee, "
-                        "conosce EuroHPC, PNRR, AI Act, ecosistema startup italiano...",
+            placeholder="Es: Esperto di AI, conosce le startup italiane, "
+                        "sa come funzionano le aziende tech...",
         )
 
         evaluation = st.text_area(
-            "Criteri di valutazione delle proposte del gruppo",
+            "Come giudica le vostre idee?",
             value=existing_config.get("evaluation", ""),
             height=80,
-            placeholder="Es: Coerenza dell'analisi, fattibilità delle raccomandazioni, "
-                        "capacità di considerare rischi e opportunità...",
+            placeholder="Es: Guarda se le idee sono realistiche, "
+                        "se avete pensato ai rischi...",
         )
 
         custom_instructions = st.text_area(
-            "Istruzioni aggiuntive (opzionale - per personalizzare ancora di più!)",
+            "Istruzioni extra (opzionale - per personalizzarlo ancora di piu'!)",
             value=existing_config.get("custom_instructions", ""),
             height=80,
-            placeholder="Es: Sfida sempre le assunzioni del gruppo, "
-                        "chiedi esempi concreti di imprese italiane...",
+            placeholder="Es: Fai sempre l'avvocato del diavolo, "
+                        "chiedi esempi concreti...",
         )
 
         submitted = st.form_submit_button(
@@ -131,9 +131,9 @@ if section == "1. Progetta l'Advisor":
                 career_role=card["scenario_title_custom"],
                 tone=selected_tone_label,
                 style=tone_value,
-                knowledge=knowledge.strip() or "Conoscenze generali su politiche industriali, AI, supercalcolo e competitività",
+                knowledge=knowledge.strip() or "Conoscenze generali su AI, tecnologia e aziende italiane",
                 question_types=", ".join(question_types) if question_types else "Miste",
-                evaluation_criteria=evaluation.strip() or "Coerenza dell'analisi, fattibilità, visione strategica",
+                evaluation_criteria=evaluation.strip() or "Se le idee sono realistiche e ben ragionate",
             )
 
             if custom_instructions.strip():
@@ -152,7 +152,7 @@ if section == "1. Progetta l'Advisor":
                 coach_system_prompt=sys_prompt,
                 coach_chat_history=[],
             )
-            st.success("System prompt generato! Andate a **2. Testa l'Advisor** per provarlo.")
+            st.success("System prompt generato! Andate a **2. Provalo** per provarlo.")
 
     # Mostra il system prompt generato
     current_prompt = group_data.get("coach_system_prompt")
@@ -162,51 +162,50 @@ if section == "1. Progetta l'Advisor":
 
     # ── Generazione foto dell'Advisor ────────────────────────────────────
     st.divider()
-    st.subheader("Genera l'avatar del tuo Advisor")
+    st.subheader("Genera l'avatar del tuo Assistente")
 
     # Mostra immagine esistente
     coach_image_url = group_data.get("coach_image_url")
     if coach_image_url:
-        st.image(coach_image_url, width=300, caption="Il vostro Policy Advisor AI")
+        st.image(coach_image_url, width=300, caption="Il vostro Assistente AI")
 
     coach_config = group_data.get("coach_config") or {}
     if coach_config:
         st.markdown(
-            f"L'advisor è: **{coach_config.get('coach_role', '')}**, "
+            f"L'assistente e': **{coach_config.get('coach_role', '')}**, "
             f"tono **{coach_config.get('tone_label', '')}**"
         )
 
-        if st.button("Genera foto dell'Advisor", type="primary", use_container_width=True):
+        if st.button("Genera foto dell'Assistente", type="primary", use_container_width=True):
             image_prompt = (
-                f"Professional portrait photo of {coach_config.get('coach_role', 'a policy advisor')}, "
-                f"working in Italian industrial policy and AI strategy in the year 2035. "
-                f"They have a {coach_config.get('tone_value', 'professional')} demeanor. "
-                f"Modern office with a view of an Italian city, high-tech environment. "
-                f"Photorealistic style, warm lighting, confident expression. "
-                f"The person is leading a strategic analysis session."
+                f"Professional portrait photo of {coach_config.get('coach_role', 'a tech expert')}, "
+                f"working in AI and technology in Italy in the year 2035. "
+                f"They have a {coach_config.get('tone_value', 'friendly')} demeanor. "
+                f"Modern office, high-tech environment. "
+                f"Photorealistic style, warm lighting, confident expression."
             )
-            with st.spinner("L'AI sta generando l'avatar del vostro advisor..."):
+            with st.spinner("L'AI sta generando l'avatar..."):
                 try:
                     url = generate_image(image_prompt)
                     state.update_group(group_name, coach_image_url=url)
-                    st.image(url, width=300, caption="Il vostro Policy Advisor AI")
+                    st.image(url, width=300, caption="Il vostro Assistente AI")
                     st.success("Avatar generato!")
                     st.rerun()
                 except Exception as e:
                     st.error(f"Errore nella generazione dell'immagine: {e}")
     else:
-        st.info("Prima genera il system prompt dell'advisor, poi potrai generare il suo avatar!")
+        st.info("Prima crea il system prompt, poi potrai generare l'avatar!")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SEZIONE 2: TESTA L'ADVISOR
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "2. Testa l'Advisor":
+elif section == "2. Provalo":
     group_data = state.get_group(group_name)
     coach_prompt = group_data.get("coach_system_prompt") if group_data else None
 
     if not coach_prompt:
-        st.info("Prima **progettate l'advisor** nella sezione 1!")
+        st.info("Prima **create l'assistente** nella sezione 1!")
         st.stop()
 
     # Mostra avatar se disponibile
@@ -215,14 +214,14 @@ elif section == "2. Testa l'Advisor":
     col_header, col_avatar = st.columns([3, 1])
     with col_header:
         st.markdown(f"""
-        ### Testa il tuo Policy Advisor
+        ### Prova il tuo Assistente AI
 
         Presentate il vostro scenario **"{card['scenario_title_custom']}"**
-        all'advisor. Difendete le vostre analisi e raccomandazioni!
+        all'assistente. Rispondete alle sue domande e difendete le vostre idee!
         """)
         st.markdown(
-            "**Suggerimenti:** Presentate lo scenario -- Difendete le raccomandazioni -- "
-            "Rispondete alle domande critiche -- Notate le 'allucinazioni'"
+            "**Suggerimenti:** Presentate lo scenario -- Difendete le vostre idee -- "
+            "Rispondete alle domande -- Notate se l'AI dice cose sbagliate"
         )
     with col_avatar:
         if coach_image_url:
@@ -240,28 +239,28 @@ elif section == "2. Testa l'Advisor":
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Se la chat è vuota, l'advisor si presenta
+    # Se la chat è vuota, l'assistente si presenta
     if not history:
         with st.chat_message("assistant"):
             intro = st.write_stream(
                 chat_stream(
                     coach_prompt,
-                    [{"role": "user", "content": "Buongiorno, siamo pronti per la sessione di analisi strategica."}],
+                    [{"role": "user", "content": "Ciao! Siamo pronti, presentati e facci le tue domande."}],
                 )
             )
-        state.add_coach_message(group_name, "user", "Buongiorno, siamo pronti per la sessione di analisi strategica.")
+        state.add_coach_message(group_name, "user", "Ciao! Siamo pronti, presentati e facci le tue domande.")
         state.add_coach_message(group_name, "assistant", intro)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # SEZIONE 3: CROSS-TEST
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "3. Prova gli Advisor degli altri":
+elif section == "3. Prova quelli degli altri":
     st.markdown("""
-    ### Prova gli Advisor degli altri gruppi
+    ### Prova gli assistenti degli altri gruppi
 
-    Seleziona un altro gruppo e provate il loro policy advisor!
-    Confrontate: quale fa le domande migliori? Quale è più incisivo?
+    Scegliete un altro gruppo e provate il loro assistente AI!
+    Quale fa le domande migliori? Quale e' piu' interessante?
     """)
 
     all_groups = state.get_all_groups()
@@ -271,7 +270,7 @@ elif section == "3. Prova gli Advisor degli altri":
     }
 
     if not other_groups:
-        st.info("Nessun altro gruppo ha ancora creato il proprio advisor. Aspettate un momento!")
+        st.info("Nessun altro gruppo ha ancora creato il proprio assistente. Aspettate un momento!")
         st.stop()
 
     selected_group = st.selectbox(
@@ -313,12 +312,12 @@ elif section == "3. Prova gli Advisor degli altri":
 # CHAT INPUT GLOBALE (sempre in fondo alla pagina)
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "2. Testa l'Advisor":
+if section == "2. Provalo":
     group_data = state.get_group(group_name)
     coach_prompt = group_data.get("coach_system_prompt") if group_data else None
 
     if coach_prompt:
-        if user_input := st.chat_input("Rispondi all'advisor..."):
+        if user_input := st.chat_input("Scrivi la tua risposta..."):
             with st.chat_message("user"):
                 st.markdown(user_input)
             state.add_coach_message(group_name, "user", user_input)
@@ -328,7 +327,7 @@ if section == "2. Testa l'Advisor":
                 response = st.write_stream(chat_stream(coach_prompt, messages))
             state.add_coach_message(group_name, "assistant", response)
 
-elif section == "3. Prova gli Advisor degli altri":
+elif section == "3. Prova quelli degli altri":
     all_groups = state.get_all_groups()
     other_groups = {
         name: data for name, data in all_groups.items()
@@ -339,7 +338,7 @@ elif section == "3. Prova gli Advisor degli altri":
         other_prompt = other_groups[selected_group]["coach_system_prompt"]
         cross_key = f"cross_chat_{selected_group}"
 
-        if cross_input := st.chat_input(f"Parla con l'advisor di {selected_group}..."):
+        if cross_input := st.chat_input(f"Parla con l'assistente di {selected_group}..."):
             with st.chat_message("user"):
                 st.markdown(cross_input)
             st.session_state[cross_key].append({"role": "user", "content": cross_input})

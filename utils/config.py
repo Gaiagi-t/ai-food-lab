@@ -8,69 +8,69 @@ APP_ICON = "🔮"
 SCENARIOS = [
     {
         "id": "backcasting",
-        "title": "Backcasting: Le barriere scompaiono",
+        "title": "Backcasting: Un futuro senza ostacoli",
         "description": (
-            "Tecnica: BACKCASTING. Immaginate che tutte le barriere (WEIGHT) identificate "
-            "nella mappatura del presente siano scomparse entro il 2035. Nessun ostacolo "
-            "burocratico, nessuna carenza di competenze, nessun gap infrastrutturale. "
-            "Partendo da questo futuro ideale, ricostruite a ritroso: quali passi sarebbero "
-            "stati necessari? Che aspetto ha la competitività delle medie e grandi imprese "
-            "italiane? Come hanno sfruttato AI, HPC e tecnologie abilitanti? "
-            "Quali regolamentazioni sono state necessarie per raggiungere questo futuro?"
+            "Immaginate che nel 2035 tutti i problemi che oggi frenano le aziende "
+            "italiane nell'usare l'AI siano stati risolti: ci sono abbastanza esperti, "
+            "la tecnologia è accessibile, le regole sono chiare. "
+            "Partendo da questo futuro perfetto, ragionate all'indietro: "
+            "cosa è successo per arrivarci? Quali scelte sono state fatte? "
+            "Come lavorano le aziende italiane in questo mondo ideale?"
         ),
         "keywords": [
-            "backcasting", "futuro ideale", "barriere rimosse",
-            "competitività", "imprese italiane", "2035",
+            "futuro ideale", "nessun ostacolo",
+            "aziende italiane", "AI accessibile", "2035",
         ],
     },
     {
         "id": "trend_analysis",
-        "title": "Trend Analysis: Modello EuroHPC federato",
+        "title": "Trend Analysis: Supercalcolo per tutti",
         "description": (
-            "Tecnica: TREND ANALYSIS. A livello nazionale e sovranazionale è stata "
-            "applicata la seguente raccomandazione: «Occorrerebbe aprire l'EuroHPC a un "
-            "modello federato di risorse infrastrutturali che favorisca la cooperazione "
-            "tra infrastrutture pubbliche e private per fornire potenza di addestramento "
-            "all'IA, sfruttando la capacità congiunta di risorse informatiche pubbliche "
-            "e private e aumentando la scala competitiva dell'UE.» "
-            "Come impatta questa policy sulla competitività delle medie e grandi imprese "
-            "italiane nel 2035?"
+            "Oggi i supercomputer più potenti (come Leonardo a Bologna) sono usati "
+            "soprattutto da università e centri di ricerca. "
+            "Immaginate che nel 2035 anche le aziende normali possano usare questi "
+            "supercomputer per addestrare i propri modelli AI, grazie a un sistema "
+            "condiviso tra pubblico e privato. "
+            "Come cambierebbe la situazione per le aziende italiane? "
+            "Chi ne beneficerebbe di più? Quali rischi ci sarebbero?"
         ),
         "keywords": [
-            "trend analysis", "EuroHPC", "supercalcolo federato",
-            "sovranità digitale", "risorse computazionali", "2035",
+            "supercomputer", "Leonardo", "condivisione",
+            "aziende", "potenza di calcolo", "2035",
         ],
     },
     {
         "id": "scenario_planning",
-        "title": "Scenario Planning: Senza regolazione cloud",
+        "title": "Scenario Planning: Dati in mano agli altri",
         "description": (
-            "Tecnica: SCENARIO PLANNING. A livello nazionale viene ignorata la seguente "
-            "raccomandazione: «Occorre favorire una regolazione pro-concorrenziale del cloud, "
-            "assieme ad una politica industriale di sviluppo di un cloud europeo e di "
-            "avanzamento nei modelli di Edge Computing.» "
-            "L'indifferenza rispetto a questa policy come impatta la competitività delle "
-            "medie e grandi imprese italiane nel 2035? Quali conseguenze può avere?"
+            "Oggi quasi tutte le aziende italiane salvano i loro dati su servizi "
+            "cloud americani (Amazon, Google, Microsoft). "
+            "Immaginate che nel 2035 l'Europa non abbia ancora creato una vera "
+            "alternativa: tutti i dati delle aziende italiane sono ancora "
+            "nelle mani di aziende straniere. "
+            "Che conseguenze ha questo? Le aziende italiane sono più o meno "
+            "competitive? Quali rischi corrono?"
         ),
         "keywords": [
-            "scenario planning", "cloud", "regolamentazione",
-            "hyperscaler", "dipendenza tecnologica", "edge computing", "2035",
+            "cloud", "dati", "dipendenza",
+            "sovranità digitale", "Big Tech", "2035",
         ],
     },
     {
         "id": "cross_impact",
-        "title": "Cross Impact: Talenti sì, semplificazione no",
+        "title": "Cross Impact: Talenti sì, burocrazia anche",
         "description": (
-            "Tecnica: CROSS IMPACT ANALYSIS. A livello nazionale viene applicata la policy "
-            "di formazione e attrazione dei talenti digitali (percorsi specialistici, incentivi, "
-            "rientro dei cervelli). Ma al contempo viene ignorata la semplificazione normativa: "
-            "si costruiscono ulteriori sovrastrutture burocratiche che appesantiscono il contesto "
-            "regolatorio. L'interazione tra queste due tendenze come impatta la competitività "
-            "delle medie e grandi imprese italiane nel 2035?"
+            "Immaginate due cose che succedono insieme nel 2035: "
+            "da un lato l'Italia investe tantissimo nella formazione di esperti AI "
+            "(corsi, borse di studio, incentivi per chi torna dall'estero). "
+            "Dall'altro, la burocrazia peggiora: servono più permessi, "
+            "più documenti, più tempo per fare qualsiasi cosa. "
+            "Cosa succede quando queste due tendenze si incrociano? "
+            "Le aziende riescono a sfruttare i nuovi talenti o la burocrazia li blocca?"
         ),
         "keywords": [
-            "cross impact", "talenti digitali", "formazione",
-            "burocrazia", "semplificazione normativa", "brain drain", "2035",
+            "talenti", "formazione", "burocrazia",
+            "fuga di cervelli", "regole", "2035",
         ],
     },
 ]
@@ -79,176 +79,176 @@ SCENARIOS = [
 
 CARD_CATEGORIES = {
     "PULL": {
-        "label": "PULL (Attrattori / Driver)",
-        "description": "Fenomeni che TRAINANO le imprese verso l'adozione dell'AI",
+        "label": "PULL (Attrae)",
+        "description": "Cose che ATTRAGGONO le aziende verso l'AI",
         "color": "#2ecc71",
         "icon": "🧲",
     },
     "PUSH": {
-        "label": "PUSH (Facilitatori / Opportunità)",
-        "description": "Fenomeni che SPINGONO e facilitano la transizione AI",
+        "label": "PUSH (Spinge)",
+        "description": "Cose che AIUTANO le aziende ad adottare l'AI",
         "color": "#3498db",
         "icon": "🚀",
     },
     "WEIGHT": {
-        "label": "WEIGHT (Barriere / Pesi)",
-        "description": "Fenomeni che FRENANO o ostacolano la transizione AI",
+        "label": "WEIGHT (Frena)",
+        "description": "Cose che FRENANO le aziende nell'adottare l'AI",
         "color": "#e74c3c",
         "icon": "⚓",
     },
 }
 
 PHENOMENON_CARDS = [
-    # --- PULL (Driver) ---
+    # --- PULL (Attrae) ---
     {
         "id": "card_01",
-        "title": "Crescita esponenziale della potenza di calcolo",
+        "title": "Computer e chip sempre piu' potenti",
         "description": (
-            "La legge di Moore e i nuovi chip specializzati (GPU, TPU) rendono "
-            "l'addestramento di modelli AI sempre più accessibile e veloce, "
-            "abbattendo le barriere d'ingresso per le imprese."
+            "I computer diventano sempre piu' potenti e costano meno. "
+            "Oggi anche un'azienda media puo' usare AI che prima "
+            "era riservata solo ai giganti della tecnologia."
         ),
         "suggested_category": "PULL",
     },
     {
         "id": "card_02",
-        "title": "Domanda di mercato per prodotti personalizzati",
+        "title": "I clienti vogliono prodotti su misura",
         "description": (
-            "I consumatori richiedono sempre più prodotti e servizi su misura. "
-            "L'AI permette la mass customization: produzione industriale con "
-            "personalizzazione individuale."
+            "Le persone vogliono prodotti personalizzati, non tutti uguali. "
+            "L'AI permette alle aziende di offrire personalizzazione "
+            "anche producendo grandi quantita'."
         ),
         "suggested_category": "PULL",
     },
     {
         "id": "card_03",
-        "title": "Competizione globale e pressione sui margini",
+        "title": "La concorrenza mondiale usa gia' l'AI",
         "description": (
-            "Le imprese italiane competono con player globali che già usano AI "
-            "massicciamente. Non adottare AI significa perdere competitività "
-            "su costi, qualità e velocità."
+            "Le aziende cinesi, americane e tedesche usano gia' l'AI "
+            "per produrre meglio e piu' velocemente. Se le aziende "
+            "italiane non si adeguano, restano indietro."
         ),
         "suggested_category": "PULL",
     },
     {
         "id": "card_04",
-        "title": "Disponibilità di Large Language Model open source",
+        "title": "AI gratis e open source per tutti",
         "description": (
-            "Modelli come Llama, Mistral e altri LLM open-source permettono "
-            "anche alle medie imprese di sviluppare soluzioni AI proprietarie "
-            "senza dipendere interamente dai big tech."
+            "Esistono modelli AI gratuiti e aperti (come Llama o Mistral) "
+            "che chiunque puo' scaricare e usare. Non serve piu' "
+            "pagare milioni per avere un'AI potente."
         ),
         "suggested_category": "PULL",
     },
     {
         "id": "card_05",
-        "title": "Eccellenza manifatturiera italiana nel Made in Italy",
+        "title": "Il Made in Italy e' un punto di forza",
         "description": (
-            "La tradizione manifatturiera italiana (meccanica, moda, alimentare, "
-            "design) rappresenta un patrimonio unico. L'AI può amplificare "
-            "questa eccellenza, non sostituirla."
+            "L'Italia e' famosa per moda, cibo, design e meccanica. "
+            "L'AI puo' rendere queste eccellenze ancora piu' competitive, "
+            "senza sostituire la creativita' italiana."
         ),
         "suggested_category": "PULL",
     },
-    # --- PUSH (Facilitatori) ---
+    # --- PUSH (Aiuta) ---
     {
         "id": "card_06",
-        "title": "PNRR e fondi europei per la transizione digitale",
+        "title": "Fondi pubblici per il digitale (PNRR)",
         "description": (
-            "Il Piano Nazionale di Ripresa e Resilienza e i fondi Horizon Europe "
-            "mettono a disposizione miliardi per la digitalizzazione e l'adozione "
-            "dell'AI nelle imprese italiane."
+            "L'Italia e l'Europa mettono a disposizione miliardi di euro "
+            "per aiutare le aziende ad adottare tecnologie digitali e AI. "
+            "Ci sono bandi e finanziamenti dedicati."
         ),
         "suggested_category": "PUSH",
     },
     {
         "id": "card_07",
-        "title": "Ecosistema EuroHPC e supercalcolo europeo",
+        "title": "Supercomputer europei (come Leonardo a Bologna)",
         "description": (
-            "L'infrastruttura EuroHPC (incluso Leonardo al CINECA di Bologna) "
-            "offre alle imprese italiane accesso a risorse di supercalcolo "
-            "per addestrare modelli AI complessi."
+            "In Europa ci sono supercomputer potentissimi, come Leonardo "
+            "a Bologna. Le aziende italiane possono usarli per "
+            "addestrare modelli AI che richiedono enorme potenza di calcolo."
         ),
         "suggested_category": "PUSH",
     },
     {
         "id": "card_08",
-        "title": "Cluster tecnologici e distretti dell'innovazione",
+        "title": "Centri che aiutano le aziende a innovare",
         "description": (
-            "Competence Center, Digital Innovation Hub e cluster tecnologici "
-            "facilitano il trasferimento tecnologico dall'università all'impresa, "
-            "abbassando la soglia di adozione dell'AI."
+            "Esistono centri specializzati (Competence Center, hub digitali) "
+            "che aiutano le aziende a capire come usare l'AI, "
+            "collegandole con universita' e ricercatori."
         ),
         "suggested_category": "PUSH",
     },
     {
         "id": "card_09",
-        "title": "AI Act europeo come standard globale",
+        "title": "Regole europee chiare sull'AI (AI Act)",
         "description": (
-            "La regolamentazione europea sull'AI crea un framework chiaro "
-            "che può diventare standard globale, dando alle imprese europee "
-            "un vantaggio di compliance first."
+            "L'Europa ha creato regole chiare su come usare l'AI "
+            "in modo sicuro e responsabile. Questo da' certezza "
+            "alle aziende e ai consumatori."
         ),
         "suggested_category": "PUSH",
     },
     {
         "id": "card_10",
-        "title": "Partnership pubblico-private per la ricerca AI",
+        "title": "Universita' e aziende che lavorano insieme",
         "description": (
-            "Programmi come il Partenariato Esteso FAIR (Future AI Research) "
-            "collegano università, centri di ricerca e imprese per sviluppare "
-            "AI applicata ai bisogni del tessuto produttivo italiano."
+            "Sempre piu' universita' e aziende collaborano su progetti AI. "
+            "I risultati della ricerca arrivano piu' velocemente "
+            "nelle fabbriche e negli uffici."
         ),
         "suggested_category": "PUSH",
     },
-    # --- WEIGHT (Barriere) ---
+    # --- WEIGHT (Frena) ---
     {
         "id": "card_11",
-        "title": "Carenza di competenze digitali e AI nelle imprese",
+        "title": "Mancano le persone che sanno usare l'AI",
         "description": (
-            "L'Italia è tra gli ultimi in Europa per competenze digitali della "
-            "forza lavoro (DESI Index). Le imprese faticano a trovare data scientist, "
-            "ML engineer e AI specialist."
+            "In Italia ci sono pochi esperti di AI e dati. "
+            "Le aziende vorrebbero assumerne, ma non li trovano. "
+            "Siamo tra gli ultimi in Europa per competenze digitali."
         ),
         "suggested_category": "WEIGHT",
     },
     {
         "id": "card_12",
-        "title": "Complessità burocratica e normativa",
+        "title": "Troppa burocrazia e regole complicate",
         "description": (
-            "La burocrazia italiana rallenta l'adozione di nuove tecnologie: "
-            "tempi lunghi per autorizzazioni, complessità fiscale, incertezza "
-            "normativa sull'uso dei dati e dell'AI."
+            "In Italia servono troppi permessi e documenti per fare "
+            "qualsiasi cosa. Questo rallenta le aziende che vogliono "
+            "innovare e adottare nuove tecnologie."
         ),
         "suggested_category": "WEIGHT",
     },
     {
         "id": "card_13",
-        "title": "Tessuto produttivo frammentato (PMI)",
+        "title": "Le aziende italiane sono troppo piccole",
         "description": (
-            "Il 95% delle imprese italiane sono micro o piccole. Investire in AI "
-            "richiede risorse, competenze e scala che molte PMI non hanno, "
-            "creando un divario digitale interno."
+            "Il 95% delle aziende italiane e' piccolo o piccolissimo. "
+            "Per usare l'AI servono soldi e competenze che le piccole "
+            "aziende spesso non hanno."
         ),
         "suggested_category": "WEIGHT",
     },
     {
         "id": "card_14",
-        "title": "Dipendenza da infrastrutture cloud extra-europee",
+        "title": "I nostri dati sono tutti su server americani",
         "description": (
-            "La maggior parte delle imprese italiane usa cloud di provider USA "
-            "(AWS, Azure, Google). Questo crea dipendenza tecnologica, rischi "
-            "di sovranità dei dati e vulnerabilità geopolitica."
+            "Quasi tutte le aziende italiane usano servizi cloud "
+            "di Amazon, Google o Microsoft. I nostri dati sono "
+            "su server stranieri: e se un giorno li spegnessero?"
         ),
         "suggested_category": "WEIGHT",
     },
     {
         "id": "card_15",
-        "title": "Brain drain: fuga dei talenti digitali italiani",
+        "title": "I talenti italiani vanno all'estero",
         "description": (
-            "Molti laureati STEM e ricercatori AI italiani emigrano verso "
-            "paesi con stipendi più alti e ecosistemi più dinamici. L'Italia "
-            "forma talenti che poi vanno a rafforzare la competitività altrui."
+            "Tanti giovani italiani bravi con la tecnologia e l'AI "
+            "se ne vanno a lavorare all'estero, dove guadagnano di piu'. "
+            "L'Italia li forma ma poi li perde."
         ),
         "suggested_category": "WEIGHT",
     },
@@ -256,82 +256,81 @@ PHENOMENON_CARDS = [
 
 # ── System Prompt per il Brainstorming Scenari ─────────────────────────────
 
-BRAINSTORMING_SYSTEM_PROMPT = """Sei un facilitatore esperto di strategic foresight e politiche \
-dell'innovazione. Stai guidando un gruppo di partecipanti in un workshop sulla competitività \
-delle medie e grandi imprese italiane grazie all'AI e alle tecnologie abilitanti.
+BRAINSTORMING_SYSTEM_PROMPT = """Sei un facilitatore che guida studenti delle superiori \
+in un workshop sull'AI e il futuro delle aziende italiane.
 
-Il gruppo sta lavorando con la tecnica: "{scenario_title}"
-Contesto dello scenario: {scenario_description}
+Il gruppo sta lavorando su: "{scenario_title}"
+Contesto: {scenario_description}
 
 Il tuo compito:
-1. Aiutali ad applicare correttamente la tecnica di foresight assegnata
-2. Stimola il pensiero critico con domande provocatorie sul futuro al 2035
-3. Cita esempi reali di politiche, tecnologie e imprese (EuroHPC, CINECA Leonardo, PNRR, AI Act, GAIA-X, ecc.)
-4. Guidali a costruire uno scenario coerente e argomentato
-5. Spingi a considerare sia le opportunità che i rischi per il sistema-Italia
+1. Aiutali a ragionare sullo scenario assegnato con domande semplici e concrete
+2. Fai esempi pratici che uno studente puo' capire (aziende note, app che usano, tecnologie quotidiane)
+3. Guidali a costruire uno scenario credibile per il 2035
+4. Stimolali a pensare sia ai lati positivi che ai rischi
+5. Collegati alla mappatura PULL/PUSH/WEIGHT fatta prima
 
 Regole:
 - Rispondi SEMPRE in italiano
-- Sii stimolante e provocatorio ma rigoroso
+- Usa un linguaggio semplice e diretto, come parleresti a dei ragazzi di quinta
 - Fai domande aperte, non dare risposte pronte
-- Mantieni le risposte brevi (max 150 parole) per favorire il dialogo
-- Se il gruppo propone un'idea, costruisci su quella invece di cambiarla
-- Ricorda loro di collegare l'analisi alla mappatura PULL/PUSH/WEIGHT fatta in precedenza"""
+- Risposte brevi (max 120 parole)
+- Se propongono un'idea, costruisci su quella"""
 
 # ── System Prompt per il Feedback sulla Scenario Card ──────────────────────
 
-FEEDBACK_SYSTEM_PROMPT = """Sei un esperto di strategic foresight e competitività industriale. \
-Analizza questa Scenario Card creata da un gruppo di partecipanti e fornisci un feedback costruttivo.
+FEEDBACK_SYSTEM_PROMPT = """Sei un insegnante che da' feedback a studenti delle superiori \
+sulla loro Scenario Card. Sii incoraggiante ma aiutali a migliorare.
 
-Scenario Card:
-- Tecnica utilizzata: {technique_name}
-- Titolo dello scenario: {scenario_title_custom}
-- Descrizione del futuro al 2035: {future_description}
-- Impatto sulle imprese italiane: {impact_on_enterprises}
-- Fattori chiave identificati: {key_factors}
-- Raccomandazioni strategiche: {strategic_recommendations}
+Scenario Card del gruppo:
+- Tecnica usata: {technique_name}
+- Titolo: {scenario_title_custom}
+- Come sara' il futuro nel 2035: {future_description}
+- Cosa cambia per le aziende: {impact_on_enterprises}
+- Fattori importanti: {key_factors}
+- Cosa dovrebbero fare le aziende: {strategic_recommendations}
 
-Fornisci un feedback strutturato in italiano:
-1. PUNTI DI FORZA: cosa hanno colto bene nell'analisi (2-3 punti)
-2. DOMANDE APERTE: aspetti da approfondire o angoli non considerati (2-3 domande)
-3. SUGGERIMENTI: come rendere lo scenario più rigoroso e le raccomandazioni più concrete (2-3 suggerimenti)
+Dai un feedback in italiano con questo schema:
+1. BRAVI! Cosa hanno fatto bene (2-3 punti)
+2. CI AVETE PENSATO? Domande per farli riflettere su cose che mancano (2-3 domande)
+3. CONSIGLI: come migliorare il lavoro (2-3 suggerimenti concreti)
 
-Sii incoraggiante ma rigoroso. Massimo 200 parole totali."""
+Usa un linguaggio semplice, adatto a studenti di quinta superiore. Max 200 parole."""
 
 # ── Template per il Policy Advisor AI (AI Lab) ─────────────────────────────
 
 COACH_SYSTEM_PROMPT_TEMPLATE = """Sei {coach_role}.
 
 CONTESTO:
-Stai conducendo una sessione di analisi strategica sullo scenario "{career_role}" \
-con un gruppo che sta esplorando la competitività delle imprese italiane nell'era dell'AI.
+Stai parlando con un gruppo di studenti delle superiori che ha creato lo scenario "{career_role}" \
+sul futuro delle aziende italiane e l'AI.
 
-LA TUA PERSONALITÀ:
+LA TUA PERSONALITA':
 - Tono: {tone}
 - Stile: {style}
 
-LE TUE CONOSCENZE SPECIFICHE:
+LE TUE CONOSCENZE:
 {knowledge}
 
-COME CONDUCI LA SESSIONE:
+COME TI COMPORTI:
 - Fai domande di tipo: {question_types}
-- Valuti le proposte del gruppo su: {evaluation_criteria}
-- Inizi sempre presentandoti brevemente e spiegando il tuo approccio
-- Fai una domanda alla volta
-- Dopo ogni risposta del gruppo, reagisci brevemente e approfondisci
-- Dopo 4-5 scambi, dai un breve giudizio complessivo sulla qualità dell'analisi
+- Valuti le idee del gruppo su: {evaluation_criteria}
+- Ti presenti brevemente all'inizio
+- Fai una domanda alla volta, semplice e diretta
+- Dopo ogni risposta, reagisci e approfondisci
+- Dopo 4-5 scambi, dai un giudizio complessivo
 
 REGOLE:
 - Rispondi SEMPRE in italiano
-- Mantieni le risposte brevi e incisive (max 100 parole)
-- Sii coerente col tuo ruolo e personalità
-- Se il gruppo divaga, riportalo al tema dello scenario"""
+- Usa un linguaggio semplice, adatto a studenti
+- Risposte brevi (max 100 parole)
+- Resta nel tuo ruolo
+- Se divagano, riportali sul tema"""
 
 COACH_ROLES = [
-    "il/la Chief Strategy Officer di una media impresa manifatturiera italiana",
-    "il/la Direttore/Direttrice di un Competence Center per l'AI e il digitale",
-    "un/una Policy Advisor del Ministero delle Imprese e del Made in Italy",
-    "il/la CEO di una startup deep-tech italiana che lavora con il supercalcolo",
+    "il/la manager di un'azienda italiana che sta decidendo se investire nell'AI",
+    "un/una esperto/a di tecnologia che aiuta le aziende a innovare",
+    "un/una imprenditore/imprenditrice che ha fondato una startup di AI in Italia",
+    "un/una giornalista esperto/a di tecnologia e innovazione",
 ]
 
 COACH_TONES = [
@@ -342,8 +341,8 @@ COACH_TONES = [
 ]
 
 COACH_QUESTION_TYPES = [
-    "Di analisi (valutazione critica di trend, dati, evidenze)",
-    "Di policy (quali politiche pubbliche servirebbero, quali effetti)",
-    "Di strategia aziendale (come un'impresa dovrebbe posizionarsi)",
-    "Di scenario (cosa succederebbe se..., quali rischi, quali opportunità)",
+    "Pratiche (come funzionerebbe nella realta'?)",
+    "Critiche (siete sicuri? quali prove avete?)",
+    "Di scenario (cosa succederebbe se...?)",
+    "Creative (avete pensato anche a...?)",
 ]

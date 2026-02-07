@@ -50,15 +50,15 @@ if section == "1. Esplorazione con AI":
     st.markdown(f"""
     ### Esplora lo scenario con l'AI
 
-    **La vostra tecnica:** {scenario['title']}
+    **Il vostro tema:** {scenario['title']}
 
     {scenario['description']}
 
-    **Keywords:** {', '.join(scenario['keywords'])}
+    **Parole chiave:** {', '.join(scenario['keywords'])}
 
     ---
-    Chattate con il facilitatore AI per esplorare il vostro scenario.
-    Costruite un'analisi coerente collegandola alla mappatura PULL/PUSH/WEIGHT!
+    Chattate con l'AI per esplorare il vostro scenario.
+    Pensate a cosa avete classificato come PULL, PUSH e WEIGHT!
     """)
 
     # Mostra la chat history
@@ -73,47 +73,47 @@ if section == "1. Esplorazione con AI":
 
 elif section == "2. Scenario Card":
     st.markdown("""
-    ### Progetta la Scenario Card
+    ### Compila la Scenario Card
 
-    Compilate la scheda dello **scenario futuro** che avete esplorato.
-    Pensate al 2035 e alla competitività delle imprese italiane!
+    Riempite la scheda con lo **scenario futuro** che avete immaginato.
+    Come sara' il mondo delle aziende nel 2035?
     """)
 
     existing = group_data.get("scenario_card") or {}
 
     with st.form("scenario_card_form"):
         scenario_title_custom = st.text_input(
-            "Titolo del vostro scenario",
+            "Date un titolo al vostro scenario",
             value=existing.get("scenario_title_custom", ""),
-            placeholder="Es: 'Italia 2035: Il Rinascimento Digitale'...",
+            placeholder="Es: 'Italia 2035: L'AI per tutti'...",
         )
 
         future_description = st.text_area(
-            "Descrizione del futuro al 2035: come appare il mondo?",
+            "Come sara' il mondo nel 2035? Descrivete il vostro scenario",
             value=existing.get("future_description", ""),
             height=120,
-            placeholder="Descrivete il contesto nel 2035 secondo il vostro scenario...",
+            placeholder="Descrivete cosa e' cambiato nel 2035 rispetto a oggi...",
         )
 
         impact_on_enterprises = st.text_area(
-            "Impatto sulle medie e grandi imprese italiane",
+            "Cosa cambia per le aziende italiane?",
             value=existing.get("impact_on_enterprises", ""),
             height=100,
-            placeholder="Come cambia la competitività? Quali settori ne beneficiano...",
+            placeholder="Le aziende stanno meglio o peggio? Chi ci guadagna e chi ci perde?",
         )
 
         key_factors = st.text_area(
-            "Fattori chiave: i 3-5 elementi determinanti del vostro scenario",
+            "Quali sono i 3-5 fattori piu' importanti nel vostro scenario?",
             value=existing.get("key_factors", ""),
             height=100,
-            placeholder="Es: disponibilità di talenti, costi del supercalcolo, regolamentazione...",
+            placeholder="Es: formazione dei giovani, costo della tecnologia, regole...",
         )
 
         strategic_recommendations = st.text_area(
-            "Raccomandazioni strategiche: cosa dovrebbero fare le imprese?",
+            "Cosa consigliereste di fare alle aziende?",
             value=existing.get("strategic_recommendations", ""),
             height=100,
-            placeholder="Es: investire in formazione interna, creare consorzi per il supercalcolo...",
+            placeholder="Es: investire nella formazione, collaborare con le universita'...",
         )
 
         submitted = st.form_submit_button(

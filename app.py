@@ -84,14 +84,14 @@ with st.sidebar:
 # ── Pagina principale ────────────────────────────────────────────────────────
 
 st.title(APP_TITLE)
-st.markdown("### Workshop — ICSC Osservatorio Supercalcolo")
+st.markdown("### Workshop interattivo su AI e futuro delle aziende")
 
 st.markdown("""
-> **La competitività delle medie e grandi imprese italiane grazie all'AI
-> e alle tecnologie abilitanti: quali scenari futuri?**
+> **Come cambieranno le aziende italiane grazie all'intelligenza artificiale?
+> Che scenari ci aspettano nel 2035?**
 
-Benvenuti nel laboratorio interattivo! In questo workshop mapperete il presente,
-esplorerete scenari futuri al 2035 e costruirete un agente AI per l'analisi strategica.
+Benvenuti! In questo workshop esplorerete come l'AI sta cambiando il mondo delle aziende,
+immaginerete scenari futuri e costruirete il vostro assistente AI.
 """)
 
 # Istruzioni
@@ -102,8 +102,8 @@ with col1:
     #### 1. Mappatura del Presente
     *45 minuti*
 
-    Classifica i fenomeni come
-    PULL, PUSH o WEIGHT.
+    Cosa aiuta e cosa frena le aziende
+    nell'usare l'AI? Classifica i fenomeni!
     """)
 
 with col2:
@@ -111,8 +111,8 @@ with col2:
     #### 2. Scenari 2035
     *50 minuti*
 
-    Esplora uno scenario futuro
-    con la tecnica di foresight assegnata.
+    Immagina come sara' il mondo
+    delle aziende tra 10 anni.
     """)
 
 with col3:
@@ -120,8 +120,8 @@ with col3:
     #### 3. AI Lab
     *40 minuti*
 
-    Costruisci il tuo Policy Advisor AI:
-    un agente per l'analisi strategica!
+    Crea il tuo assistente AI
+    e mettilo alla prova!
     """)
 
 with col4:
@@ -130,7 +130,7 @@ with col4:
     *20 minuti*
 
     Presenta il tuo scenario e vota
-    i migliori progetti!
+    i migliori!
     """)
 
 # Status dei gruppi
@@ -145,7 +145,7 @@ if groups:
             has_advisor = data.get("coach_system_prompt") is not None
             status = ""
             if has_advisor:
-                status = "Advisor pronto"
+                status = "Assistente AI pronto"
             elif has_card:
                 status = "Scenario card completata"
             else:

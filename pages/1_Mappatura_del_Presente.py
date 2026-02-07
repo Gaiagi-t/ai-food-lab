@@ -15,9 +15,8 @@ state = get_shared_state()
 
 st.title("Mappatura del Presente")
 st.markdown(
-    "Classifica i fenomeni che influenzano la **competitività delle imprese italiane "
-    "grazie all'AI**. Per ogni carta, indica se il fenomeno agisce come "
-    "**PULL** (driver), **PUSH** (facilitatore) o **WEIGHT** (barriera)."
+    "Per ogni fenomeno, decidi: **attrae** le aziende verso l'AI (PULL), "
+    "le **aiuta** ad adottarla (PUSH), o le **frena** (WEIGHT)?"
 )
 
 # Legenda categorie

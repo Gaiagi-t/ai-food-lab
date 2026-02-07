@@ -76,9 +76,9 @@ if view == "Vista Facilitatore (da proiettare)":
                 )
 
                 if has_advisor:
-                    st.success("Policy Advisor AI creato")
+                    st.success("Assistente AI creato")
                 else:
-                    st.warning("Advisor non ancora creato")
+                    st.warning("Assistente non ancora creato")
 
     # ── Word Cloud ──
     st.divider()
@@ -189,7 +189,7 @@ if view == "Vista Facilitatore (da proiettare)":
         categories = [
             "Scenario più convincente",
             "Scenario più originale",
-            "Advisor AI migliore",
+            "Assistente AI migliore",
         ]
         for cat in categories:
             cat_votes = [v.get(cat) for v in votes.values() if v.get(cat)]
@@ -230,9 +230,9 @@ else:
     my_group = st.session_state.get("group_name", "")
 
     st.markdown("""
-    ### Vota i progetti degli altri gruppi!
+    ### Vota i lavori degli altri gruppi!
 
-    Dopo le presentazioni, esprimi il tuo voto per ogni categoria.
+    Dopo le presentazioni, vota per ogni categoria.
     **Non puoi votare il tuo gruppo.**
     """)
 
@@ -280,7 +280,7 @@ else:
             format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
         v_advisor = st.selectbox(
-            "Advisor AI MIGLIORE",
+            "Assistente AI MIGLIORE",
             options=votable,
             format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
@@ -295,7 +295,7 @@ else:
                 {
                     "Scenario più convincente": v_convincente,
                     "Scenario più originale": v_originale,
-                    "Advisor AI migliore": v_advisor,
+                    "Assistente AI migliore": v_advisor,
                 },
             )
             st.success(
