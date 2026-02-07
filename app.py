@@ -1,4 +1,4 @@
-"""AI Food Innovation Lab - Home Page.
+"""Scenari Futuri: Competitività e AI - Home Page.
 
 Pagina principale dell'app: selezione del gruppo, istruzioni e pannello admin.
 """
@@ -9,7 +9,7 @@ from utils.config import APP_TITLE, APP_ICON, SCENARIOS
 import random
 
 st.set_page_config(
-    page_title="AI Food Innovation Lab",
+    page_title="Scenari Futuri - Competitività e AI",
     page_icon=APP_ICON,
     layout="wide",
     initial_sidebar_state="expanded",
@@ -43,7 +43,7 @@ with st.sidebar:
         with st.form("register_group"):
             group_name = st.text_input(
                 "Nome del gruppo",
-                placeholder="Es: Team Rocket, I Carbonara...",
+                placeholder="Es: Team Innovazione, I Visionari...",
             )
             join_existing = st.selectbox(
                 "...oppure unisciti a un gruppo esistente",
@@ -58,7 +58,7 @@ with st.sidebar:
                     st.session_state.group_name = join_existing
                     st.rerun()
                 elif group_name.strip():
-                    # Assegna uno scenario casuale tra quelli non ancora assegnati
+                    # Assegna una tecnica di foresight casuale tra quelle non ancora assegnate
                     used_scenarios = {
                         g["scenario"]["id"]
                         for g in state.get_all_groups().values()
@@ -79,18 +79,19 @@ with st.sidebar:
                     st.warning("Inserisci un nome per il gruppo.")
 
     st.divider()
-    st.caption("AI Food Innovation Lab v1.0")
+    st.caption("Scenari Futuri v1.0")
 
 # ── Pagina principale ────────────────────────────────────────────────────────
 
 st.title(APP_TITLE)
-st.markdown("### Workshop Modulo 3 — ITS Tech & Food")
+st.markdown("### Workshop — ICSC Osservatorio Supercalcolo")
 
 st.markdown("""
-> **Che cos'è davvero l'Intelligenza Artificiale e qual è l'impatto possibile sulle carriere future?**
+> **La competitività delle medie e grandi imprese italiane grazie all'AI
+> e alle tecnologie abilitanti: quali scenari futuri?**
 
-Benvenuti nel laboratorio interattivo! In questo workshop esplorerete come l'AI sta
-trasformando il mondo del food e immaginerete le **carriere del futuro**.
+Benvenuti nel laboratorio interattivo! In questo workshop mapperete il presente,
+esplorerete scenari futuri al 2035 e costruirete un agente AI per l'analisi strategica.
 """)
 
 # Istruzioni
@@ -98,20 +99,20 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown("""
-    #### 1. Il Polso della Classe
-    *20 minuti*
+    #### 1. Mappatura del Presente
+    *45 minuti*
 
-    Rispondi alle domande sull'AI
-    nel food. Individuale!
+    Classifica i fenomeni come
+    PULL, PUSH o WEIGHT.
     """)
 
 with col2:
     st.markdown("""
-    #### 2. Career Designer
+    #### 2. Scenari 2035
     *50 minuti*
 
-    Progetta la carriera del futuro
-    con il tuo gruppo, assistiti dall'AI.
+    Esplora uno scenario futuro
+    con la tecnica di foresight assegnata.
     """)
 
 with col3:
@@ -119,8 +120,8 @@ with col3:
     #### 3. AI Lab
     *40 minuti*
 
-    Costruisci il tuo Career Coach AI:
-    un agente che fa colloqui!
+    Costruisci il tuo Policy Advisor AI:
+    un agente per l'analisi strategica!
     """)
 
 with col4:
@@ -128,7 +129,7 @@ with col4:
     #### 4. Showcase & Voto
     *20 minuti*
 
-    Presenta il tuo lavoro e vota
+    Presenta il tuo scenario e vota
     i migliori progetti!
     """)
 
@@ -140,30 +141,30 @@ if groups:
     cols = st.columns(min(len(groups), 5))
     for i, (name, data) in enumerate(groups.items()):
         with cols[i % len(cols)]:
-            has_card = data.get("career_card") is not None
-            has_coach = data.get("coach_system_prompt") is not None
+            has_card = data.get("scenario_card") is not None
+            has_advisor = data.get("coach_system_prompt") is not None
             status = ""
-            if has_coach:
-                status = "Coach pronto"
+            if has_advisor:
+                status = "Advisor pronto"
             elif has_card:
-                status = "Career card completata"
+                status = "Scenario card completata"
             else:
-                status = "In esplorazione..."
+                status = "In mappatura..."
             st.metric(name, data["scenario"]["title"][:30] + "...", status)
 else:
     st.info("Nessun gruppo registrato ancora. Usa la sidebar per creare il tuo gruppo!")
 
 # ── Pannello Admin (nascosto) ────────────────────────────────────────────────
 
-with st.expander("Pannello Docente", expanded=False):
+with st.expander("Pannello Facilitatore", expanded=False):
     pwd = st.text_input("Password", type="password", key="admin_pwd")
     if pwd == st.secrets.get("ADMIN_PASSWORD", "workshop2025"):
-        st.success("Accesso docente attivo")
+        st.success("Accesso facilitatore attivo")
 
         col_a, col_b = st.columns(2)
         with col_a:
             st.metric("Gruppi", len(groups))
-            st.metric("Risposte quiz", len(state.get_quiz_responses()))
+            st.metric("Risposte mappatura", len(state.get_quiz_responses()))
         with col_b:
             st.metric("Voti ricevuti", len(state.get_all_votes()))
 

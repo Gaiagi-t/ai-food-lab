@@ -1,4 +1,4 @@
-"""Pagina 4: Showcase & Voto - Dashboard docente e sistema di voto."""
+"""Pagina 4: Showcase & Voto - Dashboard facilitatore e sistema di voto."""
 
 import streamlit as st
 import plotly.graph_objects as go
@@ -6,7 +6,7 @@ import uuid
 from collections import Counter
 
 from utils.shared_state import get_shared_state
-from utils.config import APP_ICON
+from utils.config import APP_ICON, PHENOMENON_CARDS, CARD_CATEGORIES
 
 st.set_page_config(page_title="Showcase & Voto", page_icon=APP_ICON, layout="wide")
 
@@ -18,68 +18,79 @@ st.title("Showcase & Voto")
 
 view = st.radio(
     "Seleziona la vista",
-    options=["Vista Docente (da proiettare)", "Vista Studente (vota)"],
+    options=["Vista Facilitatore (da proiettare)", "Vista Partecipante (vota)"],
     horizontal=True,
 )
 
 all_groups = state.get_all_groups()
 groups_with_cards = {
     name: data for name, data in all_groups.items()
-    if data.get("career_card")
+    if data.get("scenario_card")
 }
 
-# ── VISTA DOCENTE ────────────────────────────────────────────────────────────
+# ── VISTA FACILITATORE ──────────────────────────────────────────────────────
 
-if view == "Vista Docente (da proiettare)":
+if view == "Vista Facilitatore (da proiettare)":
     if st.button("Aggiorna dashboard", use_container_width=True):
         st.rerun()
 
     if not groups_with_cards:
-        st.info("Nessun gruppo ha ancora completato la career card.")
+        st.info("Nessun gruppo ha ancora completato la scenario card.")
         st.stop()
 
-    # ── Career Card Grid ──
-    st.subheader(f"Le Carriere del Futuro ({len(groups_with_cards)} gruppi)")
+    # ── Scenario Card Grid ──
+    st.subheader(f"Gli Scenari del 2035 ({len(groups_with_cards)} gruppi)")
 
     cols = st.columns(min(len(groups_with_cards), 3))
     for i, (name, data) in enumerate(groups_with_cards.items()):
-        card = data["career_card"]
+        card = data["scenario_card"]
         scenario = data["scenario"]
-        has_coach = data.get("coach_system_prompt") is not None
+        has_advisor = data.get("coach_system_prompt") is not None
 
         with cols[i % len(cols)]:
             with st.container(border=True):
-                # Avatar del coach
-                coach_image = data.get("coach_image_url")
-                if coach_image:
-                    st.image(coach_image, width=200)
+                # Avatar dell'advisor
+                advisor_image = data.get("coach_image_url")
+                if advisor_image:
+                    st.image(advisor_image, width=200)
 
-                st.markdown(f"### {card['role_name']}")
-                st.caption(f"Gruppo: **{name}** | Scenario: *{scenario['title']}*")
-                st.markdown(f"**Descrizione:** {card['description'][:200]}{'...' if len(card['description']) > 200 else ''}")
+                st.markdown(f"### {card['scenario_title_custom']}")
+                st.caption(f"Gruppo: **{name}** | Tecnica: *{scenario['title']}*")
+                st.markdown(
+                    f"**Futuro 2035:** {card['future_description'][:200]}"
+                    f"{'...' if len(card['future_description']) > 200 else ''}"
+                )
 
                 col_hs, col_ss = st.columns(2)
                 with col_hs:
-                    st.markdown(f"**Hard Skills:**\n{card['hard_skills'][:150]}")
+                    st.markdown(
+                        f"**Impatto imprese:**\n{card['impact_on_enterprises'][:150]}"
+                    )
                 with col_ss:
-                    st.markdown(f"**Soft Skills:**\n{card['soft_skills'][:150]}")
+                    st.markdown(
+                        f"**Fattori chiave:**\n{card['key_factors'][:150]}"
+                    )
 
-                st.markdown(f"**AI come alleata:** {card['ai_ally'][:150]}")
-                st.markdown(f"**Tocco umano:** {card['human_touch'][:150]}")
+                st.markdown(
+                    f"**Raccomandazioni:** {card['strategic_recommendations'][:150]}"
+                )
 
-                if has_coach:
-                    st.success("Career Coach AI creato")
+                if has_advisor:
+                    st.success("Policy Advisor AI creato")
                 else:
-                    st.warning("Coach non ancora creato")
+                    st.warning("Advisor non ancora creato")
 
     # ── Word Cloud ──
     st.divider()
-    st.subheader("Word Cloud delle Competenze")
+    st.subheader("Word Cloud dei Temi Chiave")
 
     all_text = ""
     for data in groups_with_cards.values():
-        card = data["career_card"]
-        all_text += f" {card['hard_skills']} {card['soft_skills']} {card['role_name']} "
+        card = data["scenario_card"]
+        all_text += (
+            f" {card['key_factors']} {card['impact_on_enterprises']} "
+            f"{card['strategic_recommendations']} {card['scenario_title_custom']} "
+        )
 
     if all_text.strip():
         try:
@@ -94,7 +105,8 @@ if view == "Vista Docente (da proiettare)":
                 "al", "alla", "ai", "alle", "dal", "dalla", "nel", "nella",
                 "non", "come", "anche", "più", "molto", "tutti", "questo",
                 "essere", "avere", "fare", "dire", "andare", "potere",
-                "es", "ed", "ad",
+                "es", "ed", "ad", "sono", "delle", "degli", "nei", "nelle",
+                "sul", "sulla", "sulle", "dai", "dagli", "dalle",
             }
 
             wc = WordCloud(
@@ -113,36 +125,60 @@ if view == "Vista Docente (da proiettare)":
         except ImportError:
             st.caption("(Installa `wordcloud` e `matplotlib` per la word cloud)")
 
-    # ── Statistiche quiz ──
+    # ── Risultati mappatura ──
     st.divider()
     quiz_responses = state.get_quiz_responses()
-    st.subheader(f"Risultati Quiz ({len(quiz_responses)} risposte)")
+    st.subheader(f"Risultati Mappatura ({len(quiz_responses)} risposte)")
 
     if quiz_responses:
-        from utils.config import QUIZ_QUESTIONS
+        # Per ogni carta, mostra la classificazione prevalente
+        card_results = []
+        for card in PHENOMENON_CARDS:
+            votes = [r["answers"].get(card["id"], "") for r in quiz_responses]
+            n_pull = votes.count("PULL")
+            n_push = votes.count("PUSH")
+            n_weight = votes.count("WEIGHT")
+            total = n_pull + n_push + n_weight
+            if total > 0:
+                max_cat = max(
+                    [("PULL", n_pull), ("PUSH", n_push), ("WEIGHT", n_weight)],
+                    key=lambda x: x[1],
+                )
+                card_results.append({
+                    "title": card["title"][:40],
+                    "category": max_cat[0],
+                    "count": max_cat[1],
+                    "total": total,
+                    "pct": max_cat[1] / total * 100,
+                })
 
-        avgs = {}
-        for q in QUIZ_QUESTIONS:
-            vals = [r["answers"].get(q["id"], 3) for r in quiz_responses]
-            avgs[q["id"]] = sum(vals) / len(vals) if vals else 0
+        if card_results:
+            # Grafico riepilogativo
+            labels = [r["title"] for r in card_results]
+            colors = [CARD_CATEGORIES[r["category"]]["color"] for r in card_results]
+            pcts = [r["pct"] for r in card_results]
 
-        labels = [q["text"][:50] + "..." for q in QUIZ_QUESTIONS]
-        values = [avgs[q["id"]] for q in QUIZ_QUESTIONS]
-
-        fig_radar = go.Figure()
-        fig_radar.add_trace(go.Scatterpolar(
-            r=values + [values[0]],
-            theta=labels + [labels[0]],
-            fill="toself",
-            name="Media classe",
-            fillcolor="rgba(46, 204, 113, 0.3)",
-            line=dict(color="rgba(46, 204, 113, 1)"),
-        ))
-        fig_radar.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 5])),
-            height=500,
-        )
-        st.plotly_chart(fig_radar, use_container_width=True)
+            fig_map = go.Figure(
+                data=[
+                    go.Bar(
+                        y=labels,
+                        x=pcts,
+                        orientation="h",
+                        marker_color=colors,
+                        text=[
+                            f"{r['category']} ({r['pct']:.0f}%)"
+                            for r in card_results
+                        ],
+                        textposition="outside",
+                    )
+                ]
+            )
+            fig_map.update_layout(
+                xaxis=dict(range=[0, 110], title="Consenso (%)"),
+                height=50 * len(card_results),
+                margin=dict(l=20, r=20, t=20, b=20),
+            )
+            st.plotly_chart(fig_map, use_container_width=True)
 
     # ── Classifica voti ──
     st.divider()
@@ -150,7 +186,11 @@ if view == "Vista Docente (da proiettare)":
     if votes:
         st.subheader(f"Classifica ({len(votes)} votanti)")
 
-        categories = ["Carriera più innovativa", "Carriera più realistica", "Coach AI migliore"]
+        categories = [
+            "Scenario più convincente",
+            "Scenario più originale",
+            "Advisor AI migliore",
+        ]
         for cat in categories:
             cat_votes = [v.get(cat) for v in votes.values() if v.get(cat)]
             if cat_votes:
@@ -159,21 +199,28 @@ if view == "Vista Docente (da proiettare)":
 
                 st.markdown(f"**{cat}:** {winner[0]} ({winner[1]} voti)")
 
-                fig_v = go.Figure(data=[
-                    go.Bar(
-                        x=list(counts.keys()),
-                        y=list(counts.values()),
-                        marker_color=["#f1c40f" if k == winner[0] else "#3498db" for k in counts.keys()],
-                    )
-                ])
-                fig_v.update_layout(height=200, margin=dict(l=0, r=0, t=10, b=0))
+                fig_v = go.Figure(
+                    data=[
+                        go.Bar(
+                            x=list(counts.keys()),
+                            y=list(counts.values()),
+                            marker_color=[
+                                "#f1c40f" if k == winner[0] else "#3498db"
+                                for k in counts.keys()
+                            ],
+                        )
+                    ]
+                )
+                fig_v.update_layout(
+                    height=200, margin=dict(l=0, r=0, t=10, b=0)
+                )
                 st.plotly_chart(fig_v, use_container_width=True)
 
-# ── VISTA STUDENTE ───────────────────────────────────────────────────────────
+# ── VISTA PARTECIPANTE ──────────────────────────────────────────────────────
 
 else:
     if not groups_with_cards:
-        st.info("Nessun gruppo ha ancora completato la career card.")
+        st.info("Nessun gruppo ha ancora completato la scenario card.")
         st.stop()
 
     # ID votante
@@ -192,44 +239,50 @@ else:
     votable = [name for name in groups_with_cards.keys() if name != my_group]
 
     if not votable:
-        st.warning("Non ci sono altri gruppi da votare (o il tuo gruppo è l'unico con una career card).")
+        st.warning(
+            "Non ci sono altri gruppi da votare "
+            "(o il tuo gruppo è l'unico con una scenario card)."
+        )
         st.stop()
 
-    # Mostra le career card in sintesi
-    st.subheader("Riepilogo Career Card")
+    # Mostra le scenario card in sintesi
+    st.subheader("Riepilogo Scenari")
     for name in votable:
         data = groups_with_cards[name]
-        card = data["career_card"]
-        with st.expander(f"**{name}** — {card['role_name']}"):
-            st.markdown(f"*Scenario: {data['scenario']['title']}*")
-            st.markdown(f"**Descrizione:** {card['description']}")
+        card = data["scenario_card"]
+        with st.expander(f"**{name}** — {card['scenario_title_custom']}"):
+            st.markdown(f"*Tecnica: {data['scenario']['title']}*")
+            st.markdown(f"**Futuro 2035:** {card['future_description']}")
             col1, col2 = st.columns(2)
             with col1:
-                st.markdown(f"**Hard Skills:** {card['hard_skills']}")
+                st.markdown(
+                    f"**Impatto imprese:** {card['impact_on_enterprises']}"
+                )
             with col2:
-                st.markdown(f"**Soft Skills:** {card['soft_skills']}")
-            st.markdown(f"**AI alleata:** {card['ai_ally']}")
-            st.markdown(f"**Tocco umano:** {card['human_touch']}")
+                st.markdown(f"**Fattori chiave:** {card['key_factors']}")
+            st.markdown(
+                f"**Raccomandazioni:** {card['strategic_recommendations']}"
+            )
 
     # Form voto
     st.divider()
     st.subheader("Esprimi il tuo voto")
 
     with st.form("vote_form"):
-        v_innovative = st.selectbox(
-            "Carriera più INNOVATIVA",
+        v_convincente = st.selectbox(
+            "Scenario più CONVINCENTE",
             options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['career_card']['role_name']}",
+            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
-        v_realistic = st.selectbox(
-            "Carriera più REALISTICA",
+        v_originale = st.selectbox(
+            "Scenario più ORIGINALE",
             options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['career_card']['role_name']}",
+            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
-        v_coach = st.selectbox(
-            "Coach AI MIGLIORE",
+        v_advisor = st.selectbox(
+            "Advisor AI MIGLIORE",
             options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['career_card']['role_name']}",
+            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
 
         submitted = st.form_submit_button(
@@ -240,10 +293,13 @@ else:
             state.cast_vote(
                 st.session_state.voter_id,
                 {
-                    "Carriera più innovativa": v_innovative,
-                    "Carriera più realistica": v_realistic,
-                    "Coach AI migliore": v_coach,
+                    "Scenario più convincente": v_convincente,
+                    "Scenario più originale": v_originale,
+                    "Advisor AI migliore": v_advisor,
                 },
             )
-            st.success("Voto registrato! Il docente vedrà i risultati in tempo reale nella sua dashboard.")
+            st.success(
+                "Voto registrato! Il facilitatore vedrà i risultati "
+                "in tempo reale nella dashboard."
+            )
             st.balloons()

@@ -31,7 +31,8 @@ class SharedState:
                 return False
             self._data["groups"][group_name] = {
                 "scenario": scenario,
-                "career_card": None,
+                "scenario_card": None,
+                "card_classifications": {},
                 "brainstorm_history": [],
                 "coach_config": None,
                 "coach_system_prompt": None,
