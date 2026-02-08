@@ -85,13 +85,15 @@ with st.sidebar:
 # ── Pagina principale ────────────────────────────────────────────────────────
 
 st.title(APP_TITLE)
-st.markdown("### Come l'intelligenza artificiale sta cambiando il mondo del cibo")
+st.markdown("### Scopri come l'AI sta cambiando il mondo del lavoro — partendo dal cibo")
 
 st.markdown("""
-> **L'AI sta rivoluzionando il modo in cui produciamo, cuciniamo e mangiamo.**
+> **L'AI sta cambiando tutto: il cibo, il lavoro, la scienza, la creativita'.**
 
-In questo workshop scoprirete come tecnologia e cibo si incontrano,
-immaginerete scenari futuri e costruirete il vostro assistente AI.
+In questo workshop userete il **mondo del food** come caso studio per capire
+come funziona l'AI, cosa sa fare davvero e cosa no, e come sta cambiando
+le professioni e il modo di lavorare. Immaginerete scenari futuri
+e costruirete il vostro assistente AI.
 """)
 
 # Phase bar
@@ -102,7 +104,7 @@ STEPS = [
     ("1", "🗺️", "Mappatura", "45 min", "Cosa attrae, aiuta o frena il food nell'usare l'AI?"),
     ("2", "🔮", "Scenari 2035", "50 min", "Immagina il mondo del cibo tra 10 anni"),
     ("3", "🤖", "AI Lab", "40 min", "Crea il tuo assistente AI e mettilo alla prova"),
-    ("4", "🏆", "Showcase", "20 min", "Presenta il tuo scenario e vota i migliori"),
+    ("4", "🏆", "Showcase", "20 min", "Presenta, vota e rifletti su AI e futuro"),
 ]
 
 cols = st.columns(4)

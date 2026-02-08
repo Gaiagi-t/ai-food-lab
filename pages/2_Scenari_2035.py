@@ -124,6 +124,23 @@ elif section == "📝 Scenario Card":
             placeholder="Es: investire in tecnologia, collaborare con startup, formarsi...",
         )
 
+        st.divider()
+        st.markdown("**E voi? Cosa c'entra con il vostro futuro?**")
+
+        new_jobs_and_skills = st.text_area(
+            "Quali nuovi lavori o competenze nascono in questo scenario?",
+            value=existing.get("new_jobs_and_skills", ""),
+            height=100,
+            placeholder="Es: data analyst per ristoranti, food AI trainer, esperto di sostenibilita' digitale...",
+        )
+
+        career_reflection = st.text_area(
+            "Cosa c'entra con il vostro futuro? Quali competenze vi interessano?",
+            value=existing.get("career_reflection", ""),
+            height=100,
+            placeholder="Es: programmare AI, analizzare dati, creare app, gestire progetti tech...",
+        )
+
         submitted = st.form_submit_button(
             "Salva la Scenario Card", use_container_width=True, type="primary"
         )
@@ -138,6 +155,8 @@ elif section == "📝 Scenario Card":
                     "impact_on_enterprises": impact_on_enterprises.strip(),
                     "key_factors": key_factors.strip(),
                     "strategic_recommendations": strategic_recommendations.strip(),
+                    "new_jobs_and_skills": new_jobs_and_skills.strip(),
+                    "career_reflection": career_reflection.strip(),
                     "technique_name": scenario["title"],
                 }
                 state.update_group(group_name, scenario_card=card)
@@ -176,6 +195,8 @@ elif section == "🤖 Feedback AI":
                 impact_on_enterprises=card["impact_on_enterprises"],
                 key_factors=card["key_factors"],
                 strategic_recommendations=card["strategic_recommendations"],
+                new_jobs_and_skills=card.get("new_jobs_and_skills", "Non compilato"),
+                career_reflection=card.get("career_reflection", "Non compilato"),
             )
 
             with st.spinner("L'AI sta analizzando la vostra scenario card..."):
@@ -201,6 +222,9 @@ elif section == "🤖 Feedback AI":
             <p><strong>💼 Cosa cambia nel food:</strong> {card['impact_on_enterprises']}</p>
             <p><strong>🔑 Fattori chiave:</strong> {card['key_factors']}</p>
             <p><strong>💡 Raccomandazioni:</strong> {card['strategic_recommendations']}</p>
+            <hr>
+            <p><strong>🎓 Nuovi lavori e competenze:</strong> {card.get('new_jobs_and_skills', '')}</p>
+            <p><strong>🚀 Il vostro futuro:</strong> {card.get('career_reflection', '')}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -214,7 +238,7 @@ if section == "💬 Esplorazione con AI":
         scenario_description=scenario["description"],
     )
 
-    if prompt := st.chat_input("Discuti con il facilitatore dello scenario..."):
+    if prompt := st.chat_input("Esplora lo scenario e le sue implicazioni..."):
         with st.chat_message("user"):
             st.markdown(prompt)
         state.add_brainstorm_message(group_name, "user", prompt)

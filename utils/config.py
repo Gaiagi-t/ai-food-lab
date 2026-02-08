@@ -301,7 +301,8 @@ Il tuo compito:
 2. Fai esempi che conoscono: app di delivery, TikTok food, brand come Beyond Meat, Too Good To Go
 3. Guidali a costruire uno scenario credibile per il 2035
 4. Stimolali a pensare sia ai lati positivi che ai rischi
-5. Collegati alla mappatura PULL/PUSH/WEIGHT fatta prima
+5. Ogni tanto collega il food al quadro piu' ampio: "Questo succede nel food, ma l'AI sta facendo la stessa cosa in medicina, gaming, musica... Quali competenze servirebbero?"
+6. Collegati alla mappatura PULL/PUSH/WEIGHT fatta prima
 
 Regole:
 - Rispondi SEMPRE in italiano
@@ -323,13 +324,16 @@ Scenario Card del gruppo:
 - Cosa cambia per chi lavora nel food: {impact_on_enterprises}
 - Fattori importanti: {key_factors}
 - Cosa dovrebbe fare chi lavora nel food: {strategic_recommendations}
+- Nuovi lavori e competenze che nascono: {new_jobs_and_skills}
+- Cosa c'entra con il loro futuro: {career_reflection}
 
 Dai un feedback in italiano con questo schema:
 1. BRAVI! Cosa hanno fatto bene (2-3 punti)
 2. CI AVETE PENSATO? Domande per farli riflettere su cose che mancano (2-3 domande)
 3. CONSIGLI: come migliorare il lavoro (2-3 suggerimenti concreti)
+4. E VOI? Collega il loro scenario alle competenze del futuro: quali abilita' sarebbero utili? Cosa dovrebbero imparare? (2 spunti)
 
-Linguaggio semplice, adatto a ragazzi di quinta superiore. Max 200 parole."""
+Linguaggio semplice, adatto a ragazzi di quinta superiore. Max 250 parole."""
 
 # ── Template per l'Assistente AI (AI Lab) ─────────────────────────────────
 
@@ -359,7 +363,8 @@ REGOLE:
 - Usa un linguaggio semplice, adatto a studenti
 - Risposte brevi (max 100 parole)
 - Resta nel tuo ruolo
-- Se divagano, riportali sul tema"""
+- Se divagano, riportali sul tema
+- Dopo 2-3 scambi, chiedi: "E voi? Quali competenze di quelle che avete visto vi sembrano piu' utili per il vostro futuro, anche fuori dal food?\""""
 
 COACH_ROLES = [
     {

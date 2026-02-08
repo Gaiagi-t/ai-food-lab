@@ -20,6 +20,7 @@ class SharedState:
             "groups": {},          # nome_gruppo -> dati del gruppo
             "quiz_responses": [],  # lista di risposte individuali al quiz
             "votes": {},           # voter_id -> {categoria: gruppo_votato}
+            "reflections": {},     # voter_id -> {domanda: risposta}
         }
 
     # ── Gruppi ───────────────────────────────────────────────────────────
@@ -123,6 +124,17 @@ class SharedState:
         with self._lock:
             return dict(self._data["votes"])
 
+    # ── Riflessioni ────────────────────────────────────────────────────
+
+    def save_reflection(self, voter_id: str, answers: dict):
+        """Salva le riflessioni finali di uno studente."""
+        with self._lock:
+            self._data["reflections"][voter_id] = answers
+
+    def get_reflections(self) -> dict:
+        with self._lock:
+            return dict(self._data["reflections"])
+
     # ── Admin ────────────────────────────────────────────────────────────
 
     def reset_all(self):
@@ -132,6 +144,7 @@ class SharedState:
                 "groups": {},
                 "quiz_responses": [],
                 "votes": {},
+                "reflections": {},
             }
 
 

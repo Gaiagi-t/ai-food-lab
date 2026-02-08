@@ -9,14 +9,14 @@ from utils.shared_state import get_shared_state
 from utils.config import APP_ICON, PHENOMENON_CARDS, CARD_CATEGORIES
 from utils.styles import inject_custom_css, render_phase_bar
 
-st.set_page_config(page_title="Showcase & Voto", page_icon=APP_ICON, layout="wide")
+st.set_page_config(page_title="Showcase & Riflessione", page_icon=APP_ICON, layout="wide")
 
 inject_custom_css()
 state = get_shared_state()
 
 render_phase_bar(4)
 
-st.title("🏆 Showcase & Voto")
+st.title("🏆 Showcase & Riflessione")
 
 # ── Selezione vista ──────────────────────────────────────────────────────────
 
@@ -82,6 +82,15 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                 st.markdown(
                     f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
                 )
+
+                if card.get("new_jobs_and_skills"):
+                    st.markdown(
+                        f"**🎓 Nuovi lavori/competenze:** {card['new_jobs_and_skills']}"
+                    )
+                if card.get("career_reflection"):
+                    st.markdown(
+                        f"**🚀 Il loro futuro:** {card['career_reflection']}"
+                    )
 
                 if has_advisor:
                     st.success("🤖 Assistente AI creato")
@@ -226,6 +235,26 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                 )
                 st.plotly_chart(fig_v, use_container_width=True)
 
+    # ── Riflessioni raccolte ──
+    st.divider()
+    reflections = state.get_reflections()
+    st.subheader(f"Riflessioni finali ({len(reflections)} risposte)")
+
+    if reflections:
+        refl_questions = [
+            ("sorpresa", "Cosa vi ha sorpreso dell'AI?"),
+            ("competenza", "Competenze/lavori del futuro che colpiscono"),
+            ("bilancio", "Potenzialita' vs limiti dell'AI"),
+        ]
+        for key, label in refl_questions:
+            answers = [r.get(key, "") for r in reflections.values() if r.get(key)]
+            if answers:
+                with st.expander(f"**{label}** ({len(answers)} risposte)"):
+                    for a in answers:
+                        st.markdown(f"- {a}")
+    else:
+        st.info("Nessuna riflessione ancora. I partecipanti possono compilarla nella vista Partecipante.")
+
 # ── VISTA PARTECIPANTE ──────────────────────────────────────────────────────
 
 else:
@@ -276,6 +305,14 @@ else:
             st.markdown(
                 f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
             )
+            if card.get("new_jobs_and_skills"):
+                st.markdown(
+                    f"**🎓 Nuovi lavori/competenze:** {card['new_jobs_and_skills']}"
+                )
+            if card.get("career_reflection"):
+                st.markdown(
+                    f"**🚀 Il loro futuro:** {card['career_reflection']}"
+                )
 
     # Form voto
     st.divider()
@@ -316,3 +353,42 @@ else:
                 "in tempo reale nella dashboard."
             )
             st.balloons()
+
+    # ── Riflessione finale ────────────────────────────────────────────────
+    st.divider()
+    st.subheader("Cosa vi portate a casa?")
+    st.markdown(
+        "Dopo aver esplorato il food tech, riflettete su cosa avete scoperto "
+        "sull'AI, sulle professioni del futuro e sulle vostre competenze."
+    )
+
+    r_sorpresa = st.text_area(
+        "Qual e' la cosa piu' sorprendente che avete scoperto sull'AI?",
+        key="refl_sorpresa",
+        height=80,
+        placeholder="Es: non sapevo che l'AI potesse creare ricette, mi ha colpito che...",
+    )
+    r_competenza = st.text_area(
+        "Quale competenza o lavoro del futuro vi ha colpito di piu'?",
+        key="refl_competenza",
+        height=80,
+        placeholder="Es: il food technologist, analizzare dati per i ristoranti, creare app...",
+    )
+    r_bilancio = st.text_area(
+        "L'AI ha piu' potenzialita' o piu' limiti? Perche'?",
+        key="refl_bilancio",
+        height=80,
+        placeholder="Es: ha tante potenzialita' ma anche rischi come la privacy, il lavoro...",
+    )
+
+    if st.button("Salva riflessione", type="primary", use_container_width=True):
+        reflection = {
+            "sorpresa": r_sorpresa.strip(),
+            "competenza": r_competenza.strip(),
+            "bilancio": r_bilancio.strip(),
+        }
+        if any(reflection.values()):
+            state.save_reflection(st.session_state.voter_id, reflection)
+            st.success("Riflessione salvata!")
+        else:
+            st.warning("Scrivi almeno una risposta prima di salvare.")
