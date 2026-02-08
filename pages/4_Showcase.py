@@ -7,18 +7,22 @@ from collections import Counter
 
 from utils.shared_state import get_shared_state
 from utils.config import APP_ICON, PHENOMENON_CARDS, CARD_CATEGORIES
+from utils.styles import inject_custom_css, render_phase_bar
 
 st.set_page_config(page_title="Showcase & Voto", page_icon=APP_ICON, layout="wide")
 
+inject_custom_css()
 state = get_shared_state()
 
-st.title("Showcase & Voto")
+render_phase_bar(4)
+
+st.title("🏆 Showcase & Voto")
 
 # ── Selezione vista ──────────────────────────────────────────────────────────
 
 view = st.radio(
     "Seleziona la vista",
-    options=["Vista Facilitatore (da proiettare)", "Vista Partecipante (vota)"],
+    options=["📊 Vista Facilitatore (da proiettare)", "🗳️ Vista Partecipante (vota)"],
     horizontal=True,
 )
 
@@ -30,7 +34,7 @@ groups_with_cards = {
 
 # ── VISTA FACILITATORE ──────────────────────────────────────────────────────
 
-if view == "Vista Facilitatore (da proiettare)":
+if view == "📊 Vista Facilitatore (da proiettare)":
     if st.button("Aggiorna dashboard", use_container_width=True):
         st.rerun()
 
@@ -48,35 +52,40 @@ if view == "Vista Facilitatore (da proiettare)":
         has_advisor = data.get("coach_system_prompt") is not None
 
         with cols[i % len(cols)]:
+            # Gallery header
+            advisor_image = data.get("coach_image_url")
+            st.markdown(f"""
+            <div class="gallery-header">
+                <h4>{card['scenario_title_custom']}</h4>
+                <p>Gruppo: {name} | {scenario['title']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
             with st.container(border=True):
-                # Avatar dell'advisor
-                advisor_image = data.get("coach_image_url")
                 if advisor_image:
                     st.image(advisor_image, width=200)
 
-                st.markdown(f"### {card['scenario_title_custom']}")
-                st.caption(f"Gruppo: **{name}** | Tecnica: *{scenario['title']}*")
                 st.markdown(
-                    f"**Futuro 2035:** {card['future_description'][:200]}"
+                    f"**🔮 Futuro 2035:** {card['future_description'][:200]}"
                     f"{'...' if len(card['future_description']) > 200 else ''}"
                 )
 
                 col_hs, col_ss = st.columns(2)
                 with col_hs:
                     st.markdown(
-                        f"**Impatto imprese:**\n{card['impact_on_enterprises'][:150]}"
+                        f"**💼 Cosa cambia:**\n{card['impact_on_enterprises'][:150]}"
                     )
                 with col_ss:
                     st.markdown(
-                        f"**Fattori chiave:**\n{card['key_factors'][:150]}"
+                        f"**🔑 Fattori chiave:**\n{card['key_factors'][:150]}"
                     )
 
                 st.markdown(
-                    f"**Raccomandazioni:** {card['strategic_recommendations'][:150]}"
+                    f"**💡 Raccomandazioni:** {card['strategic_recommendations'][:150]}"
                 )
 
                 if has_advisor:
-                    st.success("Assistente AI creato")
+                    st.success("🤖 Assistente AI creato")
                 else:
                     st.warning("Assistente non ancora creato")
 
@@ -97,7 +106,6 @@ if view == "Vista Facilitatore (da proiettare)":
             from wordcloud import WordCloud
             import matplotlib.pyplot as plt
 
-            # Stopwords italiane comuni
             stopwords = {
                 "di", "a", "da", "in", "con", "su", "per", "tra", "fra",
                 "il", "lo", "la", "i", "gli", "le", "un", "uno", "una",
@@ -131,7 +139,6 @@ if view == "Vista Facilitatore (da proiettare)":
     st.subheader(f"Risultati Mappatura ({len(quiz_responses)} risposte)")
 
     if quiz_responses:
-        # Per ogni carta, mostra la classificazione prevalente
         card_results = []
         for card in PHENOMENON_CARDS:
             votes = [r["answers"].get(card["id"], "") for r in quiz_responses]
@@ -145,7 +152,7 @@ if view == "Vista Facilitatore (da proiettare)":
                     key=lambda x: x[1],
                 )
                 card_results.append({
-                    "title": card["title"][:40],
+                    "title": f"{card['emoji']} {card['title'][:35]}",
                     "category": max_cat[0],
                     "count": max_cat[1],
                     "total": total,
@@ -153,7 +160,6 @@ if view == "Vista Facilitatore (da proiettare)":
                 })
 
         if card_results:
-            # Grafico riepilogativo
             labels = [r["title"] for r in card_results]
             colors = [CARD_CATEGORIES[r["category"]]["color"] for r in card_results]
             pcts = [r["pct"] for r in card_results]
@@ -187,17 +193,22 @@ if view == "Vista Facilitatore (da proiettare)":
         st.subheader(f"Classifica ({len(votes)} votanti)")
 
         categories = [
-            "Scenario più convincente",
-            "Scenario più originale",
-            "Assistente AI migliore",
+            ("🎯 Scenario piu' convincente", "Scenario piu' convincente"),
+            ("🏆 Scenario piu' originale", "Scenario piu' originale"),
+            ("🤖 Assistente AI migliore", "Assistente AI migliore"),
         ]
-        for cat in categories:
-            cat_votes = [v.get(cat) for v in votes.values() if v.get(cat)]
+        medals = ["🥇", "🥈", "🥉"]
+
+        for cat_display, cat_key in categories:
+            cat_votes = [v.get(cat_key) for v in votes.values() if v.get(cat_key)]
             if cat_votes:
                 counts = Counter(cat_votes)
-                winner = counts.most_common(1)[0]
+                ranking = counts.most_common(3)
 
-                st.markdown(f"**{cat}:** {winner[0]} ({winner[1]} voti)")
+                st.markdown(f"#### {cat_display}")
+                for rank_idx, (group_name_v, count) in enumerate(ranking):
+                    medal = medals[rank_idx] if rank_idx < len(medals) else ""
+                    st.markdown(f"{medal} **{group_name_v}** — {count} voti")
 
                 fig_v = go.Figure(
                     data=[
@@ -205,7 +216,7 @@ if view == "Vista Facilitatore (da proiettare)":
                             x=list(counts.keys()),
                             y=list(counts.values()),
                             marker_color=[
-                                "#f1c40f" if k == winner[0] else "#3498db"
+                                "#FF6B35" if k == ranking[0][0] else "#3498db"
                                 for k in counts.keys()
                             ],
                         )
@@ -241,7 +252,7 @@ else:
     if not votable:
         st.warning(
             "Non ci sono altri gruppi da votare "
-            "(o il tuo gruppo è l'unico con una scenario card)."
+            "(o il tuo gruppo e' l'unico con una scenario card)."
         )
         st.stop()
 
@@ -252,16 +263,19 @@ else:
         card = data["scenario_card"]
         with st.expander(f"**{name}** — {card['scenario_title_custom']}"):
             st.markdown(f"*Tecnica: {data['scenario']['title']}*")
-            st.markdown(f"**Futuro 2035:** {card['future_description']}")
+            advisor_image = data.get("coach_image_url")
+            if advisor_image:
+                st.image(advisor_image, width=150)
+            st.markdown(f"**🔮 Futuro 2035:** {card['future_description']}")
             col1, col2 = st.columns(2)
             with col1:
                 st.markdown(
-                    f"**Impatto imprese:** {card['impact_on_enterprises']}"
+                    f"**💼 Cosa cambia nel food:** {card['impact_on_enterprises']}"
                 )
             with col2:
-                st.markdown(f"**Fattori chiave:** {card['key_factors']}")
+                st.markdown(f"**🔑 Fattori chiave:** {card['key_factors']}")
             st.markdown(
-                f"**Raccomandazioni:** {card['strategic_recommendations']}"
+                f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
             )
 
     # Form voto
@@ -270,17 +284,17 @@ else:
 
     with st.form("vote_form"):
         v_convincente = st.selectbox(
-            "Scenario più CONVINCENTE",
+            "🎯 Scenario piu' CONVINCENTE",
             options=votable,
             format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
         v_originale = st.selectbox(
-            "Scenario più ORIGINALE",
+            "🏆 Scenario piu' ORIGINALE",
             options=votable,
             format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
         v_advisor = st.selectbox(
-            "Assistente AI MIGLIORE",
+            "🤖 Assistente AI MIGLIORE",
             options=votable,
             format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
         )
@@ -293,13 +307,13 @@ else:
             state.cast_vote(
                 st.session_state.voter_id,
                 {
-                    "Scenario più convincente": v_convincente,
-                    "Scenario più originale": v_originale,
+                    "Scenario piu' convincente": v_convincente,
+                    "Scenario piu' originale": v_originale,
                     "Assistente AI migliore": v_advisor,
                 },
             )
             st.success(
-                "Voto registrato! Il facilitatore vedrà i risultati "
+                "Voto registrato! Il facilitatore vedra' i risultati "
                 "in tempo reale nella dashboard."
             )
             st.balloons()

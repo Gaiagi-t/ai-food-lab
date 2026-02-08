@@ -3,6 +3,7 @@
 import streamlit as st
 from utils.shared_state import get_shared_state
 from utils.ai_client import chat_stream
+from utils.styles import inject_custom_css, render_phase_bar
 from utils.config import (
     BRAINSTORMING_SYSTEM_PROMPT,
     FEEDBACK_SYSTEM_PROMPT,
@@ -11,7 +12,10 @@ from utils.config import (
 
 st.set_page_config(page_title="Scenari 2035", page_icon=APP_ICON, layout="wide")
 
+inject_custom_css()
 state = get_shared_state()
+
+render_phase_bar(2)
 
 # ── Verifica gruppo ──────────────────────────────────────────────────────────
 
@@ -28,14 +32,14 @@ if not group_data:
 
 scenario = group_data["scenario"]
 
-st.title("Scenari 2035")
+st.title("🔮 Scenari 2035")
 st.markdown(f"**Gruppo:** {group_name} | **Tecnica:** {scenario['title']}")
 
 # ── Navigazione via radio ────────────────────────────────────────────────────
 
 section = st.radio(
     "Fase",
-    options=["1. Esplorazione con AI", "2. Scenario Card", "3. Feedback AI"],
+    options=["💬 Esplorazione con AI", "📝 Scenario Card", "🤖 Feedback AI"],
     horizontal=True,
     label_visibility="collapsed",
 )
@@ -46,20 +50,24 @@ st.divider()
 # SEZIONE 1: ESPLORAZIONE CON AI
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "1. Esplorazione con AI":
+if section == "💬 Esplorazione con AI":
+    # Mission card con gradient
+    keywords_html = " ".join(
+        f'<span class="mission-kw">{kw}</span>' for kw in scenario["keywords"]
+    )
     st.markdown(f"""
-    ### Esplora lo scenario con l'AI
+    <div class="mission-card">
+        <h3>La vostra missione</h3>
+        <p><strong>{scenario['title']}</strong></p>
+        <p>{scenario['description'][:300]}{'...' if len(scenario['description']) > 300 else ''}</p>
+        <div>{keywords_html}</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    **Il vostro tema:** {scenario['title']}
-
-    {scenario['description']}
-
-    **Parole chiave:** {', '.join(scenario['keywords'])}
-
-    ---
-    Chattate con l'AI per esplorare il vostro scenario.
-    Pensate a cosa avete classificato come PULL, PUSH e WEIGHT!
-    """)
+    st.markdown(
+        "Chattate con l'AI per esplorare il vostro scenario. "
+        "Pensate a cosa avete classificato come PULL, PUSH e WEIGHT!"
+    )
 
     # Mostra la chat history
     history = state.get_brainstorm_history(group_name)
@@ -71,12 +79,12 @@ if section == "1. Esplorazione con AI":
 # SEZIONE 2: SCENARIO CARD
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "2. Scenario Card":
+elif section == "📝 Scenario Card":
     st.markdown("""
     ### Compila la Scenario Card
 
     Riempite la scheda con lo **scenario futuro** che avete immaginato.
-    Come sara' il mondo delle aziende nel 2035?
+    Come sara' il mondo del cibo nel 2035?
     """)
 
     existing = group_data.get("scenario_card") or {}
@@ -85,35 +93,35 @@ elif section == "2. Scenario Card":
         scenario_title_custom = st.text_input(
             "Date un titolo al vostro scenario",
             value=existing.get("scenario_title_custom", ""),
-            placeholder="Es: 'Italia 2035: L'AI per tutti'...",
+            placeholder="Es: 'Italia 2035: il cibo diventa smart'...",
         )
 
         future_description = st.text_area(
-            "Come sara' il mondo nel 2035? Descrivete il vostro scenario",
+            "Come sara' il mondo del cibo nel 2035? Descrivete il vostro scenario",
             value=existing.get("future_description", ""),
             height=120,
             placeholder="Descrivete cosa e' cambiato nel 2035 rispetto a oggi...",
         )
 
         impact_on_enterprises = st.text_area(
-            "Cosa cambia per le aziende italiane?",
+            "Cosa cambia per chi lavora nel food?",
             value=existing.get("impact_on_enterprises", ""),
             height=100,
-            placeholder="Le aziende stanno meglio o peggio? Chi ci guadagna e chi ci perde?",
+            placeholder="Ristoranti, startup, agricoltori... chi ci guadagna e chi ci perde?",
         )
 
         key_factors = st.text_area(
             "Quali sono i 3-5 fattori piu' importanti nel vostro scenario?",
             value=existing.get("key_factors", ""),
             height=100,
-            placeholder="Es: formazione dei giovani, costo della tecnologia, regole...",
+            placeholder="Es: tecnologia accessibile, nuove abitudini alimentari, sostenibilita'...",
         )
 
         strategic_recommendations = st.text_area(
-            "Cosa consigliereste di fare alle aziende?",
+            "Cosa dovrebbe fare chi lavora nel food per prepararsi?",
             value=existing.get("strategic_recommendations", ""),
             height=100,
-            placeholder="Es: investire nella formazione, collaborare con le universita'...",
+            placeholder="Es: investire in tecnologia, collaborare con startup, formarsi...",
         )
 
         submitted = st.form_submit_button(
@@ -122,7 +130,7 @@ elif section == "2. Scenario Card":
 
         if submitted:
             if not scenario_title_custom.strip():
-                st.error("Il titolo dello scenario è obbligatorio!")
+                st.error("Il titolo dello scenario e' obbligatorio!")
             else:
                 card = {
                     "scenario_title_custom": scenario_title_custom.strip(),
@@ -142,7 +150,7 @@ elif section == "2. Scenario Card":
 # SEZIONE 3: FEEDBACK AI
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "3. Feedback AI":
+elif section == "🤖 Feedback AI":
     st.markdown("### Feedback AI sulla vostra Scenario Card")
 
     group_data = state.get_group(group_name)
@@ -180,27 +188,27 @@ elif section == "3. Feedback AI":
                 with st.chat_message("assistant"):
                     st.write_stream(chat_stream(sys_prompt, messages))
 
-        # Anteprima della card
+        # Anteprima stilizzata della card
         st.divider()
         st.markdown("#### Anteprima della vostra Scenario Card")
 
-        col_left, col_right = st.columns(2)
-        with col_left:
-            st.markdown(f"**{card['scenario_title_custom']}**")
-            st.markdown(f"*Tecnica: {card.get('technique_name', scenario['title'])}*")
-            st.markdown(f"**Futuro 2035:** {card['future_description']}")
-            st.markdown(f"**Impatto imprese:** {card['impact_on_enterprises']}")
-        with col_right:
-            st.markdown(f"**Fattori chiave:** {card['key_factors']}")
-            st.markdown(
-                f"**Raccomandazioni:** {card['strategic_recommendations']}"
-            )
+        st.markdown(f"""
+        <div class="scenario-preview">
+            <h3>{card['scenario_title_custom']}</h3>
+            <p><em>Tecnica: {card.get('technique_name', scenario['title'])}</em></p>
+            <hr>
+            <p><strong>🔮 Futuro 2035:</strong> {card['future_description']}</p>
+            <p><strong>💼 Cosa cambia nel food:</strong> {card['impact_on_enterprises']}</p>
+            <p><strong>🔑 Fattori chiave:</strong> {card['key_factors']}</p>
+            <p><strong>💡 Raccomandazioni:</strong> {card['strategic_recommendations']}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # CHAT INPUT GLOBALE (sempre in fondo alla pagina, solo per esplorazione)
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "1. Esplorazione con AI":
+if section == "💬 Esplorazione con AI":
     sys_prompt = BRAINSTORMING_SYSTEM_PROMPT.format(
         scenario_title=scenario["title"],
         scenario_description=scenario["description"],

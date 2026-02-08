@@ -1,20 +1,22 @@
-"""Scenari Futuri: Competitività e AI - Home Page.
+"""Food Futures: AI e il Futuro del Cibo - Home Page.
 
 Pagina principale dell'app: selezione del gruppo, istruzioni e pannello admin.
 """
 
 import streamlit as st
 from utils.shared_state import get_shared_state
+from utils.styles import inject_custom_css, render_phase_bar
 from utils.config import APP_TITLE, APP_ICON, SCENARIOS
 import random
 
 st.set_page_config(
-    page_title="Scenari Futuri - Competitività e AI",
+    page_title="Food Futures: AI e il Futuro del Cibo",
     page_icon=APP_ICON,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
+inject_custom_css()
 state = get_shared_state()
 
 # ── Sidebar: selezione gruppo ────────────────────────────────────────────────
@@ -38,12 +40,12 @@ with st.sidebar:
 
         existing = state.get_group_names()
         if existing:
-            st.caption(f"Gruppi già registrati: {', '.join(existing)}")
+            st.caption(f"Gruppi gia' registrati: {', '.join(existing)}")
 
         with st.form("register_group"):
             group_name = st.text_input(
                 "Nome del gruppo",
-                placeholder="Es: Team Innovazione, I Visionari...",
+                placeholder="Es: Team Sushi, I Futuristi, Pizza Crew...",
             )
             join_existing = st.selectbox(
                 "...oppure unisciti a un gruppo esistente",
@@ -58,7 +60,6 @@ with st.sidebar:
                     st.session_state.group_name = join_existing
                     st.rerun()
                 elif group_name.strip():
-                    # Assegna una tecnica di foresight casuale tra quelle non ancora assegnate
                     used_scenarios = {
                         g["scenario"]["id"]
                         for g in state.get_all_groups().values()
@@ -67,71 +68,54 @@ with st.sidebar:
                         s for s in SCENARIOS if s["id"] not in used_scenarios
                     ]
                     if not available:
-                        available = SCENARIOS  # fallback: riusa gli scenari
+                        available = SCENARIOS
                     scenario = random.choice(available)
 
                     if state.register_group(group_name.strip(), scenario):
                         st.session_state.group_name = group_name.strip()
                         st.rerun()
                     else:
-                        st.error("Questo nome è già stato preso!")
+                        st.error("Questo nome e' gia' stato preso!")
                 else:
                     st.warning("Inserisci un nome per il gruppo.")
 
     st.divider()
-    st.caption("Scenari Futuri v1.0")
+    st.caption("Food Futures v2.0")
 
 # ── Pagina principale ────────────────────────────────────────────────────────
 
 st.title(APP_TITLE)
-st.markdown("### Workshop interattivo su AI e futuro delle aziende")
+st.markdown("### Come l'intelligenza artificiale sta cambiando il mondo del cibo")
 
 st.markdown("""
-> **Come cambieranno le aziende italiane grazie all'intelligenza artificiale?
-> Che scenari ci aspettano nel 2035?**
+> **L'AI sta rivoluzionando il modo in cui produciamo, cuciniamo e mangiamo.**
 
-Benvenuti! In questo workshop esplorerete come l'AI sta cambiando il mondo delle aziende,
+In questo workshop scoprirete come tecnologia e cibo si incontrano,
 immaginerete scenari futuri e costruirete il vostro assistente AI.
 """)
 
-# Istruzioni
-col1, col2, col3, col4 = st.columns(4)
+# Phase bar
+render_phase_bar(0)
 
-with col1:
-    st.markdown("""
-    #### 1. Mappatura del Presente
-    *45 minuti*
+# Step cards visive
+STEPS = [
+    ("1", "🗺️", "Mappatura", "45 min", "Cosa attrae, aiuta o frena il food nell'usare l'AI?"),
+    ("2", "🔮", "Scenari 2035", "50 min", "Immagina il mondo del cibo tra 10 anni"),
+    ("3", "🤖", "AI Lab", "40 min", "Crea il tuo assistente AI e mettilo alla prova"),
+    ("4", "🏆", "Showcase", "20 min", "Presenta il tuo scenario e vota i migliori"),
+]
 
-    Cosa aiuta e cosa frena le aziende
-    nell'usare l'AI? Classifica i fenomeni!
-    """)
-
-with col2:
-    st.markdown("""
-    #### 2. Scenari 2035
-    *50 minuti*
-
-    Immagina come sara' il mondo
-    delle aziende tra 10 anni.
-    """)
-
-with col3:
-    st.markdown("""
-    #### 3. AI Lab
-    *40 minuti*
-
-    Crea il tuo assistente AI
-    e mettilo alla prova!
-    """)
-
-with col4:
-    st.markdown("""
-    #### 4. Showcase & Voto
-    *20 minuti*
-
-    Presenta il tuo scenario e vota
-    i migliori!
-    """)
+cols = st.columns(4)
+for col, (num, emoji, title, time, desc) in zip(cols, STEPS):
+    with col:
+        st.markdown(f"""
+        <div class="step-card">
+            <div class="step-emoji">{emoji}</div>
+            <h4>{num}. {title}</h4>
+            <p class="step-time">{time}</p>
+            <p class="step-desc">{desc}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # Status dei gruppi
 st.divider()

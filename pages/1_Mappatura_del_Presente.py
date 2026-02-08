@@ -6,26 +6,31 @@ import uuid
 
 from utils.shared_state import get_shared_state
 from utils.config import PHENOMENON_CARDS, CARD_CATEGORIES, APP_ICON
+from utils.styles import inject_custom_css, render_phase_bar
 
 st.set_page_config(
     page_title="Mappatura del Presente", page_icon=APP_ICON, layout="wide"
 )
 
+inject_custom_css()
 state = get_shared_state()
 
-st.title("Mappatura del Presente")
+render_phase_bar(1)
+
+st.title("🗺️ Mappatura del Presente")
 st.markdown(
-    "Per ogni fenomeno, decidi: **attrae** le aziende verso l'AI (PULL), "
-    "le **aiuta** ad adottarla (PUSH), o le **frena** (WEIGHT)?"
+    "Per ogni fenomeno, decidi: **attrae** il food verso l'AI (PULL), "
+    "lo **aiuta** ad adottarla (PUSH), o lo **frena** (WEIGHT)?"
 )
 
-# Legenda categorie
-col_l1, col_l2, col_l3 = st.columns(3)
-for col, (key, cat) in zip([col_l1, col_l2, col_l3], CARD_CATEGORIES.items()):
-    with col:
-        st.markdown(
-            f"{cat['icon']} **{key}**: {cat['description']}"
-        )
+# Legenda con pill colorate
+st.markdown("""
+<div style="display:flex; gap:12px; flex-wrap:wrap; margin:0.5rem 0 1rem;">
+    <span class="cat-pill cat-pill-pull">🧲 PULL — Attrae</span>
+    <span class="cat-pill cat-pill-push">🚀 PUSH — Aiuta</span>
+    <span class="cat-pill cat-pill-weight">⚓ WEIGHT — Frena</span>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
@@ -41,24 +46,30 @@ tab_classify, tab_results = st.tabs(
 
 with tab_classify:
     st.markdown(
-        "**Per ogni fenomeno, seleziona la categoria che ritieni più appropriata.**"
+        "**Per ogni fenomeno, seleziona la categoria che ritieni piu' appropriata.**"
     )
 
     with st.form("card_sorting_form"):
         classifications = {}
 
-        for i, card in enumerate(PHENOMENON_CARDS):
-            with st.container(border=True):
-                st.markdown(f"**{card['title']}**")
-                st.caption(card["description"])
-                classifications[card["id"]] = st.radio(
-                    f"Classifica: {card['title'][:40]}",
-                    options=["PULL", "PUSH", "WEIGHT"],
-                    horizontal=True,
-                    key=f"classify_{card['id']}",
-                    format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {x}",
-                    label_visibility="collapsed",
-                )
+        for row_start in range(0, len(PHENOMENON_CARDS), 2):
+            cols = st.columns(2)
+            for col_idx, card_idx in enumerate(range(row_start, min(row_start + 2, len(PHENOMENON_CARDS)))):
+                card = PHENOMENON_CARDS[card_idx]
+                with cols[col_idx]:
+                    with st.container(border=True):
+                        st.markdown(f"### {card['emoji']} {card['title']}")
+                        st.caption(card["short_description"])
+                        with st.expander("Approfondisci"):
+                            st.markdown(card["description"])
+                        classifications[card["id"]] = st.radio(
+                            f"Classifica: {card['title'][:40]}",
+                            options=["PULL", "PUSH", "WEIGHT"],
+                            horizontal=True,
+                            key=f"classify_{card['id']}",
+                            format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {x}",
+                            label_visibility="collapsed",
+                        )
 
         submitted = st.form_submit_button(
             "Invia la mia mappatura",
@@ -106,7 +117,7 @@ with tab_results:
         fig_summary = go.Figure(
             data=[
                 go.Bar(
-                    x=["PULL", "PUSH", "WEIGHT"],
+                    x=["🧲 PULL", "🚀 PUSH", "⚓ WEIGHT"],
                     y=[total_pull, total_push, total_weight],
                     marker_color=[
                         CARD_CATEGORIES["PULL"]["color"],
@@ -138,12 +149,10 @@ with tab_results:
             if total == 0:
                 continue
 
-            # Calcola percentuali
             pct_pull = n_pull / total * 100
             pct_push = n_push / total * 100
             pct_weight = n_weight / total * 100
 
-            # Categoria prevalente
             max_cat = max(
                 [("PULL", n_pull), ("PUSH", n_push), ("WEIGHT", n_weight)],
                 key=lambda x: x[1],
@@ -152,7 +161,7 @@ with tab_results:
 
             col_info, col_chart = st.columns([1, 2])
             with col_info:
-                st.markdown(f"**{card['title']}**")
+                st.markdown(f"**{card['emoji']} {card['title']}**")
                 icon = CARD_CATEGORIES[max_cat[0]]["icon"]
                 label = max_cat[0]
                 if consensus:
@@ -218,11 +227,10 @@ with tab_results:
         for card in PHENOMENON_CARDS:
             suggested = card["suggested_category"]
             icon = CARD_CATEGORIES[suggested]["icon"]
-            with st.expander(f"{card['title']}"):
+            with st.expander(f"{card['emoji']} {card['title']}"):
                 st.markdown(f"**Classificazione suggerita:** {icon} **{suggested}**")
                 st.markdown(card["description"])
 
-                # Confronto con le risposte
                 votes = [r["answers"].get(card["id"], "") for r in responses]
                 n_match = votes.count(suggested)
                 total = len(votes)

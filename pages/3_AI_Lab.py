@@ -3,6 +3,7 @@
 import streamlit as st
 from utils.shared_state import get_shared_state
 from utils.ai_client import chat_stream, generate_image
+from utils.styles import inject_custom_css, render_phase_bar
 from utils.config import (
     COACH_SYSTEM_PROMPT_TEMPLATE,
     COACH_ROLES,
@@ -13,7 +14,10 @@ from utils.config import (
 
 st.set_page_config(page_title="AI Lab", page_icon=APP_ICON, layout="wide")
 
+inject_custom_css()
 state = get_shared_state()
+
+render_phase_bar(3)
 
 # ── Verifica gruppo ──────────────────────────────────────────────────────────
 
@@ -36,7 +40,7 @@ if not card:
     )
     st.stop()
 
-st.title("AI Lab: Crea il tuo Assistente AI")
+st.title("🤖 AI Lab: Crea il tuo Assistente AI")
 st.markdown(
     f"**Gruppo:** {group_name} | **Scenario:** {card['scenario_title_custom']}"
 )
@@ -45,18 +49,22 @@ st.markdown(
 
 section = st.radio(
     "Sezione",
-    options=["1. Crea l'Assistente", "2. Provalo", "3. Prova quelli degli altri"],
+    options=["🛠️ Crea l'Assistente", "💬 Provalo", "🔄 Prova quelli degli altri"],
     horizontal=True,
     label_visibility="collapsed",
 )
 
 st.divider()
 
+# Helper: label per i ruoli
+role_labels = [f"{r['emoji']} {r['label']}" for r in COACH_ROLES]
+role_by_label = {f"{r['emoji']} {r['label']}": r for r in COACH_ROLES}
+
 # ══════════════════════════════════════════════════════════════════════════════
 # SEZIONE 1: PROGETTA L'ADVISOR
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "1. Crea l'Assistente":
+if section == "🛠️ Crea l'Assistente":
     st.markdown("""
     ### Crea il tuo Assistente AI
 
@@ -64,14 +72,34 @@ if section == "1. Crea l'Assistente":
     L'app creera' il **system prompt** dalle vostre scelte.
     """)
 
+    # Card ruoli
+    st.markdown("**Scegli il personaggio:**")
+    role_cols = st.columns(len(COACH_ROLES))
+    for col, role in zip(role_cols, COACH_ROLES):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"### {role['emoji']}")
+                st.markdown(f"**{role['label']}**")
+                st.caption(role["full"][:80] + "...")
+
     existing_config = group_data.get("coach_config") or {}
 
+    # Trova indice del ruolo salvato
+    saved_role_label = existing_config.get("coach_role_label", "")
+    default_role_idx = 0
+    for idx, rl in enumerate(role_labels):
+        if rl == saved_role_label:
+            default_role_idx = idx
+            break
+
     with st.form("coach_config_form"):
-        coach_role = st.selectbox(
+        selected_role_label = st.radio(
             "Chi sara' il vostro assistente?",
-            options=COACH_ROLES,
-            index=COACH_ROLES.index(existing_config["coach_role"]) if existing_config.get("coach_role") in COACH_ROLES else 0,
+            options=role_labels,
+            index=default_role_idx,
+            horizontal=True,
         )
+        selected_role = role_by_label[selected_role_label]
 
         tone_labels = [t[0] for t in COACH_TONES]
         selected_tone_label = st.selectbox(
@@ -91,8 +119,8 @@ if section == "1. Crea l'Assistente":
             "Di cosa e' esperto il vostro assistente?",
             value=existing_config.get("knowledge", ""),
             height=80,
-            placeholder="Es: Esperto di AI, conosce le startup italiane, "
-                        "sa come funzionano le aziende tech...",
+            placeholder="Es: Esperto di food tech, conosce le startup del food, "
+                        "sa tutto di delivery e social media...",
         )
 
         evaluation = st.text_area(
@@ -100,7 +128,7 @@ if section == "1. Crea l'Assistente":
             value=existing_config.get("evaluation", ""),
             height=80,
             placeholder="Es: Guarda se le idee sono realistiche, "
-                        "se avete pensato ai rischi...",
+                        "se avete pensato ai rischi e alle opportunita'...",
         )
 
         custom_instructions = st.text_area(
@@ -108,7 +136,7 @@ if section == "1. Crea l'Assistente":
             value=existing_config.get("custom_instructions", ""),
             height=80,
             placeholder="Es: Fai sempre l'avvocato del diavolo, "
-                        "chiedi esempi concreti...",
+                        "chiedi esempi concreti, parla di TikTok...",
         )
 
         submitted = st.form_submit_button(
@@ -117,7 +145,8 @@ if section == "1. Crea l'Assistente":
 
         if submitted:
             config = {
-                "coach_role": coach_role,
+                "coach_role_label": selected_role_label,
+                "coach_role_full": selected_role["full"],
                 "tone_label": selected_tone_label,
                 "tone_value": tone_value,
                 "question_types": question_types,
@@ -127,11 +156,11 @@ if section == "1. Crea l'Assistente":
             }
 
             sys_prompt = COACH_SYSTEM_PROMPT_TEMPLATE.format(
-                coach_role=coach_role,
+                coach_role=selected_role["full"],
                 career_role=card["scenario_title_custom"],
                 tone=selected_tone_label,
                 style=tone_value,
-                knowledge=knowledge.strip() or "Conoscenze generali su AI, tecnologia e aziende italiane",
+                knowledge=knowledge.strip() or "Conoscenze generali su food tech, AI e tendenze del mondo del cibo",
                 question_types=", ".join(question_types) if question_types else "Miste",
                 evaluation_criteria=evaluation.strip() or "Se le idee sono realistiche e ben ragionate",
             )
@@ -141,9 +170,9 @@ if section == "1. Crea l'Assistente":
 
             sys_prompt += (
                 f"\n\nSCENARIO DEL GRUPPO:\n{card['future_description']}"
-                f"\n\nIMPATTO SULLE IMPRESE:\n{card['impact_on_enterprises']}"
+                f"\n\nCOSA CAMBIA NEL FOOD:\n{card['impact_on_enterprises']}"
                 f"\n\nFATTORI CHIAVE:\n{card['key_factors']}"
-                f"\n\nRACCOMANDAZIONI STRATEGICHE:\n{card['strategic_recommendations']}"
+                f"\n\nRACCOMANDAZIONI:\n{card['strategic_recommendations']}"
             )
 
             state.update_group(
@@ -152,7 +181,7 @@ if section == "1. Crea l'Assistente":
                 coach_system_prompt=sys_prompt,
                 coach_chat_history=[],
             )
-            st.success("System prompt generato! Andate a **2. Provalo** per provarlo.")
+            st.success("System prompt generato! Andate a **💬 Provalo** per provarlo.")
 
     # Mostra il system prompt generato
     current_prompt = group_data.get("coach_system_prompt")
@@ -196,7 +225,7 @@ if section == "1. Crea l'Assistente":
 # SEZIONE 2: TESTA L'ADVISOR
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "2. Provalo":
+elif section == "💬 Provalo":
     group_data = state.get_group(group_name)
     coach_prompt = group_data.get("coach_system_prompt") if group_data else None
 
@@ -235,7 +264,7 @@ elif section == "2. Provalo":
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Se la chat è vuota, l'assistente si presenta
+    # Se la chat e' vuota, l'assistente si presenta
     if not history:
         with st.chat_message("assistant"):
             intro = st.write_stream(
@@ -251,7 +280,7 @@ elif section == "2. Provalo":
 # SEZIONE 3: CROSS-TEST
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif section == "3. Prova quelli degli altri":
+elif section == "🔄 Prova quelli degli altri":
     st.markdown("""
     ### Prova gli assistenti degli altri gruppi
 
@@ -308,7 +337,7 @@ elif section == "3. Prova quelli degli altri":
 # CHAT INPUT GLOBALE (sempre in fondo alla pagina)
 # ══════════════════════════════════════════════════════════════════════════════
 
-if section == "2. Provalo":
+if section == "💬 Provalo":
     group_data = state.get_group(group_name)
     coach_prompt = group_data.get("coach_system_prompt") if group_data else None
 
@@ -323,7 +352,7 @@ if section == "2. Provalo":
                 response = st.write_stream(chat_stream(coach_prompt, messages))
             state.add_coach_message(group_name, "assistant", response)
 
-elif section == "3. Prova quelli degli altri":
+elif section == "🔄 Prova quelli degli altri":
     all_groups = state.get_all_groups()
     other_groups = {
         name: data for name, data in all_groups.items()
