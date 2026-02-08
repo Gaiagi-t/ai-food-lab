@@ -18,14 +18,17 @@ state = get_shared_state()
 render_phase_bar(1)
 
 st.title("🗺️ Mappatura del Presente")
-st.markdown(
-    "Per ogni fenomeno, decidi: **attrae** il food verso l'AI (PULL), "
-    "lo **aiuta** ad adottarla (PUSH), o lo **frena** (WEIGHT)?"
-)
+
+st.markdown("""
+<div class="info-banner">
+    <p>Per ogni fenomeno, decidi: <strong>attrae</strong> il food verso l'AI (PULL),
+    lo <strong>aiuta</strong> ad adottarla (PUSH), o lo <strong>frena</strong> (WEIGHT)?</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Legenda con pill colorate
 st.markdown("""
-<div style="display:flex; gap:12px; flex-wrap:wrap; margin:0.5rem 0 1rem;">
+<div style="display:flex; gap:12px; flex-wrap:wrap; margin:0.8rem 0 1rem;">
     <span class="cat-pill cat-pill-pull">🧲 PULL — Attrae</span>
     <span class="cat-pill cat-pill-push">🚀 PUSH — Aiuta</span>
     <span class="cat-pill cat-pill-weight">⚓ WEIGHT — Frena</span>
@@ -56,20 +59,25 @@ with tab_classify:
             cols = st.columns(2)
             for col_idx, card_idx in enumerate(range(row_start, min(row_start + 2, len(PHENOMENON_CARDS)))):
                 card = PHENOMENON_CARDS[card_idx]
+                hint_cls = card.get("suggested_category", "").lower() + "-hint"
                 with cols[col_idx]:
-                    with st.container(border=True):
-                        st.markdown(f"### {card['emoji']} {card['title']}")
-                        st.caption(card["short_description"])
-                        with st.expander("Approfondisci"):
-                            st.markdown(card["description"])
-                        classifications[card["id"]] = st.radio(
-                            f"Classifica: {card['title'][:40]}",
-                            options=["PULL", "PUSH", "WEIGHT"],
-                            horizontal=True,
-                            key=f"classify_{card['id']}",
-                            format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {x}",
-                            label_visibility="collapsed",
-                        )
+                    st.markdown(f"""
+                    <div class="phenom-card {hint_cls}">
+                        <span class="phenom-emoji">{card['emoji']}</span>
+                        <p class="phenom-title">{card['title']}</p>
+                        <p class="phenom-desc">{card['short_description']}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    with st.expander("Approfondisci"):
+                        st.markdown(card["description"])
+                    classifications[card["id"]] = st.radio(
+                        f"Classifica: {card['title'][:40]}",
+                        options=["PULL", "PUSH", "WEIGHT"],
+                        horizontal=True,
+                        key=f"classify_{card['id']}",
+                        format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {x}",
+                        label_visibility="collapsed",
+                    )
 
         submitted = st.form_submit_button(
             "Invia la mia mappatura",

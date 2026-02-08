@@ -72,15 +72,18 @@ if section == "🛠️ Crea l'Assistente":
     L'app creera' il **system prompt** dalle vostre scelte.
     """)
 
-    # Card ruoli
+    # Card ruoli con stile
     st.markdown("**Scegli il personaggio:**")
     role_cols = st.columns(len(COACH_ROLES))
     for col, role in zip(role_cols, COACH_ROLES):
         with col:
-            with st.container(border=True):
-                st.markdown(f"### {role['emoji']}")
-                st.markdown(f"**{role['label']}**")
-                st.caption(role["full"])
+            st.markdown(f"""
+            <div class="role-card">
+                <span class="role-emoji">{role['emoji']}</span>
+                <div class="role-label">{role['label']}</div>
+                <div class="role-desc">{role['full']}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
     existing_config = group_data.get("coach_config") or {}
 

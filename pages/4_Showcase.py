@@ -1,4 +1,4 @@
-"""Pagina 4: Showcase & Voto - Dashboard facilitatore e sistema di voto."""
+"""Pagina 4: Showcase & Riflessione - Dashboard facilitatore e sistema di voto."""
 
 import streamlit as st
 import plotly.graph_objects as go
@@ -42,6 +42,34 @@ if view == "📊 Vista Facilitatore (da proiettare)":
         st.info("Nessun gruppo ha ancora completato la scenario card.")
         st.stop()
 
+    # ── Stat cards ──
+    col_s1, col_s2, col_s3 = st.columns(3)
+    with col_s1:
+        st.markdown(f"""
+        <div class="stat-card">
+            <span class="stat-value">{len(groups_with_cards)}</span>
+            <span class="stat-label">Scenari completati</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_s2:
+        n_votes = len(state.get_all_votes())
+        st.markdown(f"""
+        <div class="stat-card">
+            <span class="stat-value">{n_votes}</span>
+            <span class="stat-label">Voti ricevuti</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with col_s3:
+        n_refl = len(state.get_reflections())
+        st.markdown(f"""
+        <div class="stat-card">
+            <span class="stat-value">{n_refl}</span>
+            <span class="stat-label">Riflessioni</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
     # ── Scenario Card Grid ──
     st.subheader(f"Gli Scenari del 2035 ({len(groups_with_cards)} gruppi)")
 
@@ -52,16 +80,18 @@ if view == "📊 Vista Facilitatore (da proiettare)":
         has_advisor = data.get("coach_system_prompt") is not None
 
         with cols[i % len(cols)]:
-            # Gallery header
-            advisor_image = data.get("coach_image_url")
+            # Gallery card with header
             st.markdown(f"""
-            <div class="gallery-header">
-                <h4>{card['scenario_title_custom']}</h4>
-                <p>Gruppo: {name} | {scenario['title']}</p>
+            <div class="gallery-card">
+                <div class="gallery-header">
+                    <h4>{card['scenario_title_custom']}</h4>
+                    <p>Gruppo: {name} | {scenario['title']}</p>
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
             with st.container(border=True):
+                advisor_image = data.get("coach_image_url")
                 if advisor_image:
                     st.image(advisor_image, width=200)
 
@@ -269,11 +299,11 @@ else:
     my_group = st.session_state.get("group_name", "")
 
     st.markdown("""
-    ### Vota i lavori degli altri gruppi!
-
-    Dopo le presentazioni, vota per ogni categoria.
-    **Non puoi votare il tuo gruppo.**
-    """)
+    <div class="info-banner">
+        <p><strong>Vota i lavori degli altri gruppi!</strong> Dopo le presentazioni,
+        vota per ogni categoria. Non puoi votare il tuo gruppo.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     votable = [name for name in groups_with_cards.keys() if name != my_group]
 
@@ -356,11 +386,14 @@ else:
 
     # ── Riflessione finale ────────────────────────────────────────────────
     st.divider()
-    st.subheader("Cosa vi portate a casa?")
-    st.markdown(
-        "Dopo aver esplorato il food tech, riflettete su cosa avete scoperto "
-        "sull'AI, sulle professioni del futuro e sulle vostre competenze."
-    )
+
+    st.markdown("""
+    <div class="reflection-box">
+        <h3>Cosa vi portate a casa?</h3>
+        <p>Dopo aver esplorato il food tech, riflettete su cosa avete scoperto
+        sull'AI, sulle professioni del futuro e sulle vostre competenze.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     r_sorpresa = st.text_area(
         "Qual e' la cosa piu' sorprendente che avete scoperto sull'AI?",

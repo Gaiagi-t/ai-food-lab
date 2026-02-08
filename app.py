@@ -82,10 +82,17 @@ with st.sidebar:
     st.divider()
     st.caption("Food Futures v2.0")
 
-# ── Pagina principale ────────────────────────────────────────────────────────
+# ── Hero section ─────────────────────────────────────────────────────────────
 
-st.title(APP_TITLE)
-st.markdown("### Scopri come l'AI sta cambiando il mondo del lavoro — partendo dal cibo")
+st.markdown("""
+<div class="hero-section">
+    <span class="hero-emoji">🍕🤖🔬</span>
+    <h1>Food Futures: AI e il Futuro del Cibo</h1>
+    <p class="hero-subtitle">
+        Scopri come l'AI sta cambiando il mondo del lavoro — partendo dal cibo
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 > **L'AI sta cambiando tutto: il cibo, il lavoro, la scienza, la creativita'.**
@@ -112,9 +119,10 @@ for col, (num, emoji, title, time, desc) in zip(cols, STEPS):
     with col:
         st.markdown(f"""
         <div class="step-card">
-            <div class="step-emoji">{emoji}</div>
-            <h4>{num}. {title}</h4>
-            <p class="step-time">{time}</p>
+            <span class="step-num">{num}</span>
+            <span class="step-emoji">{emoji}</span>
+            <h4>{title}</h4>
+            <span class="step-time">{time}</span>
             <p class="step-desc">{desc}</p>
         </div>
         """, unsafe_allow_html=True)
