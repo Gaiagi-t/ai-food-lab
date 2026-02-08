@@ -134,7 +134,7 @@ if groups:
                 status = "Scenario card completata"
             else:
                 status = "In mappatura..."
-            st.metric(name, data["scenario"]["title"][:30] + "...", status)
+            st.metric(name, data["scenario"]["title"], status)
 else:
     st.info("Nessun gruppo registrato ancora. Usa la sidebar per creare il tuo gruppo!")
 

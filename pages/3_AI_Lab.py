@@ -80,7 +80,7 @@ if section == "🛠️ Crea l'Assistente":
             with st.container(border=True):
                 st.markdown(f"### {role['emoji']}")
                 st.markdown(f"**{role['label']}**")
-                st.caption(role["full"][:80] + "...")
+                st.caption(role["full"])
 
     existing_config = group_data.get("coach_config") or {}
 

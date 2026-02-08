@@ -66,22 +66,21 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                     st.image(advisor_image, width=200)
 
                 st.markdown(
-                    f"**🔮 Futuro 2035:** {card['future_description'][:200]}"
-                    f"{'...' if len(card['future_description']) > 200 else ''}"
+                    f"**🔮 Futuro 2035:** {card['future_description']}"
                 )
 
                 col_hs, col_ss = st.columns(2)
                 with col_hs:
                     st.markdown(
-                        f"**💼 Cosa cambia:**\n{card['impact_on_enterprises'][:150]}"
+                        f"**💼 Cosa cambia:**\n{card['impact_on_enterprises']}"
                     )
                 with col_ss:
                     st.markdown(
-                        f"**🔑 Fattori chiave:**\n{card['key_factors'][:150]}"
+                        f"**🔑 Fattori chiave:**\n{card['key_factors']}"
                     )
 
                 st.markdown(
-                    f"**💡 Raccomandazioni:** {card['strategic_recommendations'][:150]}"
+                    f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
                 )
 
                 if has_advisor:

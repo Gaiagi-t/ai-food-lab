@@ -59,7 +59,7 @@ if section == "💬 Esplorazione con AI":
     <div class="mission-card">
         <h3>La vostra missione</h3>
         <p><strong>{scenario['title']}</strong></p>
-        <p>{scenario['description'][:300]}{'...' if len(scenario['description']) > 300 else ''}</p>
+        <p>{scenario['description']}</p>
         <div>{keywords_html}</div>
     </div>
     """, unsafe_allow_html=True)
