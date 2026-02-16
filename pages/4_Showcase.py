@@ -180,27 +180,29 @@ if view == "📊 Vista Facilitatore (da proiettare)":
         card_results = []
         for card in PHENOMENON_CARDS:
             votes = [r["answers"].get(card["id"], "") for r in quiz_responses]
-            n_pull = votes.count("PULL")
-            n_push = votes.count("PUSH")
-            n_weight = votes.count("WEIGHT")
-            total = n_pull + n_push + n_weight
+            n_like = votes.count("MI_PIACE")
+            n_dislike = votes.count("NON_MI_PIACE")
+            total = n_like + n_dislike
             if total > 0:
-                max_cat = max(
-                    [("PULL", n_pull), ("PUSH", n_push), ("WEIGHT", n_weight)],
-                    key=lambda x: x[1],
-                )
+                pct_like = n_like / total * 100
                 card_results.append({
                     "title": f"{card['emoji']} {card['title'][:35]}",
-                    "category": max_cat[0],
-                    "count": max_cat[1],
+                    "n_like": n_like,
+                    "n_dislike": n_dislike,
                     "total": total,
-                    "pct": max_cat[1] / total * 100,
+                    "pct_like": pct_like,
                 })
 
         if card_results:
+            # Ordina per % mi piace (dal piu' popolare)
+            card_results.sort(key=lambda x: x["pct_like"], reverse=True)
             labels = [r["title"] for r in card_results]
-            colors = [CARD_CATEGORIES[r["category"]]["color"] for r in card_results]
-            pcts = [r["pct"] for r in card_results]
+            colors = [
+                CARD_CATEGORIES["MI_PIACE"]["color"] if r["pct_like"] >= 50
+                else CARD_CATEGORIES["NON_MI_PIACE"]["color"]
+                for r in card_results
+            ]
+            pcts = [r["pct_like"] for r in card_results]
 
             fig_map = go.Figure(
                 data=[
@@ -210,7 +212,7 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                         orientation="h",
                         marker_color=colors,
                         text=[
-                            f"{r['category']} ({r['pct']:.0f}%)"
+                            f"👍 {r['pct_like']:.0f}%"
                             for r in card_results
                         ],
                         textposition="outside",
@@ -218,7 +220,7 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                 ]
             )
             fig_map.update_layout(
-                xaxis=dict(range=[0, 110], title="Consenso (%)"),
+                xaxis=dict(range=[0, 110], title="% Mi piace"),
                 height=50 * len(card_results),
                 margin=dict(l=20, r=20, t=20, b=20),
             )
@@ -284,6 +286,31 @@ if view == "📊 Vista Facilitatore (da proiettare)":
                         st.markdown(f"- {a}")
     else:
         st.info("Nessuna riflessione ancora. I partecipanti possono compilarla nella vista Partecipante.")
+
+    # ── Presentazioni caricate ──
+    st.divider()
+    presentations = state.get_all_presentations()
+    st.subheader(f"Presentazioni caricate ({len(presentations)})")
+
+    if presentations:
+        for gname, pinfo in presentations.items():
+            col_name, col_file, col_dl = st.columns([2, 2, 1])
+            with col_name:
+                st.markdown(f"**{gname}**")
+            with col_file:
+                st.caption(f"{pinfo['filename']} — {pinfo['uploaded_at'][:16]}")
+            with col_dl:
+                pdata = state.get_presentation(gname)
+                if pdata:
+                    st.download_button(
+                        "Scarica",
+                        data=pdata["data_bytes"],
+                        file_name=pdata["filename"],
+                        mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        key=f"dl_{gname}",
+                    )
+    else:
+        st.info("Nessuna presentazione caricata ancora.")
 
 # ── VISTA PARTECIPANTE ──────────────────────────────────────────────────────
 
@@ -425,3 +452,45 @@ else:
             st.success("Riflessione salvata!")
         else:
             st.warning("Scrivi almeno una risposta prima di salvare.")
+
+    # ── Upload presentazione ─────────────────────────────────────────────
+    st.divider()
+
+    st.markdown("""
+    <div class="info-banner">
+        <p><strong>Carica la presentazione del tuo gruppo!</strong>
+        Caricate il file PowerPoint che userete per presentare
+        il vostro progetto nella prossima lezione.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if my_group:
+        existing_pres = state.get_presentation(my_group)
+        if existing_pres:
+            st.success(
+                f"Presentazione gia' caricata: **{existing_pres['filename']}** "
+                f"({existing_pres['uploaded_at'][:16]})"
+            )
+            st.caption("Puoi caricare una nuova versione per sostituirla.")
+
+        uploaded_file = st.file_uploader(
+            "Carica la presentazione (.pptx, .ppt, .pdf)",
+            type=["pptx", "ppt", "pdf"],
+            key="ppt_upload",
+        )
+
+        if uploaded_file is not None:
+            if st.button(
+                "Conferma caricamento",
+                type="primary",
+                use_container_width=True,
+            ):
+                state.save_presentation(
+                    my_group,
+                    uploaded_file.name,
+                    uploaded_file.getvalue(),
+                )
+                st.success(f"Presentazione **{uploaded_file.name}** caricata!")
+                st.rerun()
+    else:
+        st.warning("Registra il tuo gruppo dalla Home per caricare la presentazione.")

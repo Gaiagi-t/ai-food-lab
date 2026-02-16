@@ -20,9 +20,8 @@ GLOBAL_CSS = """
     margin: 0 4px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
-.cat-pill-pull { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-.cat-pill-push { background: linear-gradient(135deg, #3498db, #2980b9); }
-.cat-pill-weight { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.cat-pill-mi_piace { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+.cat-pill-non_mi_piace { background: linear-gradient(135deg, #e74c3c, #c0392b); }
 
 /* ── Phase bar ── */
 .phase-bar {
@@ -175,9 +174,8 @@ GLOBAL_CSS = """
     transform: translateX(4px);
     box-shadow: 0 4px 18px rgba(0,0,0,0.1);
 }
-.phenom-card.pull-hint { border-left-color: #2ecc71; }
-.phenom-card.push-hint { border-left-color: #3498db; }
-.phenom-card.weight-hint { border-left-color: #e74c3c; }
+.phenom-card.mi_piace-hint { border-left-color: #2ecc71; }
+.phenom-card.non_mi_piace-hint { border-left-color: #e74c3c; }
 .phenom-card .phenom-emoji {
     font-size: 2.2rem;
     margin-bottom: 0.3rem;

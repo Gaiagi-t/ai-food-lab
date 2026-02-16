@@ -21,6 +21,7 @@ class SharedState:
             "quiz_responses": [],  # lista di risposte individuali al quiz
             "votes": {},           # voter_id -> {categoria: gruppo_votato}
             "reflections": {},     # voter_id -> {domanda: risposta}
+            "presentations": {},   # group_name -> {filename, data_bytes, uploaded_at}
         }
 
     # ── Gruppi ───────────────────────────────────────────────────────────
@@ -135,6 +136,26 @@ class SharedState:
         with self._lock:
             return dict(self._data["reflections"])
 
+    # ── Presentazioni ────────────────────────────────────────────────────
+
+    def save_presentation(self, group_name: str, filename: str, data_bytes: bytes):
+        """Salva una presentazione PowerPoint per un gruppo."""
+        with self._lock:
+            self._data["presentations"][group_name] = {
+                "filename": filename,
+                "data_bytes": data_bytes,
+                "uploaded_at": datetime.now().isoformat(),
+            }
+
+    def get_presentation(self, group_name: str) -> dict | None:
+        with self._lock:
+            return self._data["presentations"].get(group_name)
+
+    def get_all_presentations(self) -> dict:
+        with self._lock:
+            return {k: {"filename": v["filename"], "uploaded_at": v["uploaded_at"]}
+                    for k, v in self._data["presentations"].items()}
+
     # ── Admin ────────────────────────────────────────────────────────────
 
     def reset_all(self):
@@ -145,6 +166,7 @@ class SharedState:
                 "quiz_responses": [],
                 "votes": {},
                 "reflections": {},
+                "presentations": {},
             }
 
 

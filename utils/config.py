@@ -82,28 +82,22 @@ SCENARIOS = [
 # ── Carte fenomeno per Mappatura del Presente ──────────────────────────────
 
 CARD_CATEGORIES = {
-    "PULL": {
-        "label": "PULL (Attrae)",
-        "description": "Cose che ATTRAGGONO il mondo food verso l'AI",
+    "MI_PIACE": {
+        "label": "Mi piace",
+        "description": "Questo fenomeno mi piace, lo trovo positivo",
         "color": "#2ecc71",
-        "icon": "\U0001f9f2",
+        "icon": "\U0001f44d",
     },
-    "PUSH": {
-        "label": "PUSH (Spinge)",
-        "description": "Cose che AIUTANO il food ad adottare l'AI",
-        "color": "#3498db",
-        "icon": "\U0001f680",
-    },
-    "WEIGHT": {
-        "label": "WEIGHT (Frena)",
-        "description": "Cose che FRENANO il food nell'adottare l'AI",
+    "NON_MI_PIACE": {
+        "label": "Non mi piace",
+        "description": "Questo fenomeno non mi piace, mi preoccupa",
         "color": "#e74c3c",
-        "icon": "\u2693",
+        "icon": "\U0001f44e",
     },
 }
 
 PHENOMENON_CARDS = [
-    # --- PULL (Attrae) ---
+    # --- MI_PIACE ---
     {
         "id": "card_01",
         "emoji": "\U0001f3af",
@@ -114,7 +108,7 @@ PHENOMENON_CARDS = [
             "in base a quello che hai ordinato prima. Funziona: il 40% degli ordini "
             "arriva dai suggerimenti. Se l'AI ti conosce, il ristorante vende di piu'."
         ),
-        "suggested_category": "PULL",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_02",
@@ -126,7 +120,7 @@ PHENOMENON_CARDS = [
             "e i pancake giapponesi. Un video da 10 milioni di views puo' far esplodere "
             "le vendite di un prodotto in tutto il mondo, da un giorno all'altro."
         ),
-        "suggested_category": "PULL",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_03",
@@ -138,7 +132,7 @@ PHENOMENON_CARDS = [
             "migliaia di combinazioni di ingredienti. L'AI puo' creare una maionese "
             "vegetale che ha lo stesso sapore di quella classica. Addio trial and error."
         ),
-        "suggested_category": "PULL",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_04",
@@ -150,7 +144,7 @@ PHENOMENON_CARDS = [
             "per dirti cosa dovresti mangiare TU, non una dieta generica uguale per tutti. "
             "Il cibo diventa una cosa personale come la playlist di Spotify."
         ),
-        "suggested_category": "PULL",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_05",
@@ -162,9 +156,9 @@ PHENOMENON_CARDS = [
             "L'AI accelera lo sviluppo di proteine alternative che hanno il gusto "
             "della carne ma senza allevamenti. Un mercato che vale gia' 8 miliardi."
         ),
-        "suggested_category": "PULL",
+        "suggested_category": "MI_PIACE",
     },
-    # --- PUSH (Aiuta) ---
+    # --- MI_PIACE (continua) ---
     {
         "id": "card_06",
         "emoji": "\U0001f916",
@@ -175,7 +169,7 @@ PHENOMENON_CARDS = [
             "per scrivere menu, tradurre in 10 lingue, calcolare food cost, gestire "
             "le recensioni. Strumenti AI potenti e gratuiti che prima non esistevano."
         ),
-        "suggested_category": "PUSH",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_07",
@@ -187,7 +181,7 @@ PHENOMENON_CARDS = [
             "Si usa fino all'80% di acqua in meno. Aziende come Planeta Farms "
             "a Milano coltivano insalata in capannoni con l'AI che regola tutto."
         ),
-        "suggested_category": "PUSH",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_08",
@@ -199,7 +193,7 @@ PHENOMENON_CARDS = [
             "il pomodoro, chi l'ha raccolto, come e' stato trasportato. La blockchain "
             "rende impossibile barare. Il Made in Italy diventa verificabile al 100%."
         ),
-        "suggested_category": "PUSH",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_09",
@@ -211,7 +205,7 @@ PHENOMENON_CARDS = [
             "L'AI gestisce gli ordini, ottimizza i tempi di cottura e prevede la domanda. "
             "Costano poco da aprire. In Italia sono gia' centinaia."
         ),
-        "suggested_category": "PUSH",
+        "suggested_category": "MI_PIACE",
     },
     {
         "id": "card_10",
@@ -223,9 +217,9 @@ PHENOMENON_CARDS = [
             "una figura che non esisteva 10 anni fa e che oggi le aziende cercano "
             "disperatamente. Sa di AI, dati, e capisce il settore alimentare."
         ),
-        "suggested_category": "PUSH",
+        "suggested_category": "MI_PIACE",
     },
-    # --- WEIGHT (Frena) ---
+    # --- NON_MI_PIACE ---
     {
         "id": "card_11",
         "emoji": "\U0001f441\ufe0f",
@@ -236,7 +230,7 @@ PHENOMENON_CARDS = [
             "le aziende tech raccolgono dati su di te. Sanno le tue allergie, "
             "le tue abitudini, i tuoi orari. Chi controlla questi dati ha un potere enorme."
         ),
-        "suggested_category": "WEIGHT",
+        "suggested_category": "NON_MI_PIACE",
     },
     {
         "id": "card_12",
@@ -248,7 +242,7 @@ PHENOMENON_CARDS = [
             "a cottimo, senza tutele, guidati da un algoritmo che decide tutto. "
             "Piu' la tecnologia avanza, piu' il lavoro umano rischia di valere meno."
         ),
-        "suggested_category": "WEIGHT",
+        "suggested_category": "NON_MI_PIACE",
     },
     {
         "id": "card_13",
@@ -260,7 +254,7 @@ PHENOMENON_CARDS = [
             "Un piccolo ristorante o non ci sta, o perde soldi. Il potere si sposta "
             "verso chi controlla la tecnologia e i dati, non verso chi cucina."
         ),
-        "suggested_category": "WEIGHT",
+        "suggested_category": "NON_MI_PIACE",
     },
     {
         "id": "card_14",
@@ -272,7 +266,7 @@ PHENOMENON_CARDS = [
             "App come Too Good To Go aiutano, ma il problema e' strutturale. "
             "Servira' davvero l'AI per risolverlo, o servono scelte diverse?"
         ),
-        "suggested_category": "WEIGHT",
+        "suggested_category": "NON_MI_PIACE",
     },
     {
         "id": "card_15",
@@ -284,7 +278,7 @@ PHENOMENON_CARDS = [
             "che l'AI rovini l'autenticita' del food italiano. 'La carbonara la fa "
             "la nonna, non un robot.' Questa resistenza culturale frena l'innovazione."
         ),
-        "suggested_category": "WEIGHT",
+        "suggested_category": "NON_MI_PIACE",
     },
 ]
 
@@ -302,7 +296,7 @@ Il tuo compito:
 3. Guidali a costruire uno scenario credibile per il 2035
 4. Stimolali a pensare sia ai lati positivi che ai rischi
 5. Ogni tanto collega il food al quadro piu' ampio: "Questo succede nel food, ma l'AI sta facendo la stessa cosa in medicina, gaming, musica... Quali competenze servirebbero?"
-6. Collegati alla mappatura PULL/PUSH/WEIGHT fatta prima
+6. Collegati alla mappatura "mi piace / non mi piace" fatta prima
 
 Regole:
 - Rispondi SEMPRE in italiano

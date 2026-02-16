@@ -1,4 +1,4 @@
-"""Pagina 1: Mappatura del Presente - Classificazione carte PULL/PUSH/WEIGHT."""
+"""Pagina 1: Mappatura del Presente - Mi piace / Non mi piace."""
 
 import streamlit as st
 import plotly.graph_objects as go
@@ -21,27 +21,25 @@ st.title("🗺️ Mappatura del Presente")
 
 st.markdown("""
 <div class="info-banner">
-    <p>Per ogni fenomeno, decidi: <strong>attrae</strong> il food verso l'AI (PULL),
-    lo <strong>aiuta</strong> ad adottarla (PUSH), o lo <strong>frena</strong> (WEIGHT)?</p>
+    <p>Per ogni fenomeno legato all'AI nel mondo del cibo,
+    decidi: ti <strong>piace</strong> o <strong>non ti piace</strong>?</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Legenda con pill colorate
+# Legenda
 st.markdown("""
 <div style="display:flex; gap:12px; flex-wrap:wrap; margin:0.8rem 0 1rem;">
-    <span class="cat-pill cat-pill-pull">🧲 PULL — Attrae</span>
-    <span class="cat-pill cat-pill-push">🚀 PUSH — Aiuta</span>
-    <span class="cat-pill cat-pill-weight">⚓ WEIGHT — Frena</span>
+    <span class="cat-pill cat-pill-mi_piace">👍 Mi piace</span>
+    <span class="cat-pill cat-pill-non_mi_piace">👎 Non mi piace</span>
 </div>
 """, unsafe_allow_html=True)
 
 st.divider()
 
-# Genera un ID partecipante per questa sessione browser
 if "student_id" not in st.session_state:
     st.session_state.student_id = str(uuid.uuid4())[:8]
 
-# ── Sezione Classificazione ──────────────────────────────────────────────────
+# ── Classificazione ──────────────────────────────────────────────────────────
 
 tab_classify, tab_results = st.tabs(
     ["Classifica le carte", "Risultati del gruppo"]
@@ -49,7 +47,7 @@ tab_classify, tab_results = st.tabs(
 
 with tab_classify:
     st.markdown(
-        "**Per ogni fenomeno, seleziona la categoria che ritieni piu' appropriata.**"
+        "**Per ogni fenomeno, esprimi la tua opinione: ti piace o non ti piace?**"
     )
 
     with st.form("card_sorting_form"):
@@ -72,10 +70,10 @@ with tab_classify:
                         st.markdown(card["description"])
                     classifications[card["id"]] = st.radio(
                         f"Classifica: {card['title'][:40]}",
-                        options=["PULL", "PUSH", "WEIGHT"],
+                        options=["MI_PIACE", "NON_MI_PIACE"],
                         horizontal=True,
                         key=f"classify_{card['id']}",
-                        format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {x}",
+                        format_func=lambda x: f"{CARD_CATEGORIES[x]['icon']} {CARD_CATEGORIES[x]['label']}",
                         label_visibility="collapsed",
                     )
 
@@ -94,7 +92,7 @@ with tab_classify:
                 "per vedere la distribuzione."
             )
 
-# ── Sezione Risultati ────────────────────────────────────────────────────────
+# ── Risultati ────────────────────────────────────────────────────────────────
 
 with tab_results:
     responses = state.get_quiz_responses()
@@ -107,32 +105,28 @@ with tab_results:
         if st.button("Aggiorna risultati", use_container_width=True):
             st.rerun()
 
-        # ── Riepilogo aggregato: quante carte per categoria ──
+        # Riepilogo aggregato
         st.subheader("Distribuzione complessiva")
 
-        total_pull = 0
-        total_push = 0
-        total_weight = 0
+        total_like = 0
+        total_dislike = 0
         for r in responses:
             for card_id, cat in r["answers"].items():
-                if cat == "PULL":
-                    total_pull += 1
-                elif cat == "PUSH":
-                    total_push += 1
-                elif cat == "WEIGHT":
-                    total_weight += 1
+                if cat == "MI_PIACE":
+                    total_like += 1
+                elif cat == "NON_MI_PIACE":
+                    total_dislike += 1
 
         fig_summary = go.Figure(
             data=[
                 go.Bar(
-                    x=["🧲 PULL", "🚀 PUSH", "⚓ WEIGHT"],
-                    y=[total_pull, total_push, total_weight],
+                    x=["👍 Mi piace", "👎 Non mi piace"],
+                    y=[total_like, total_dislike],
                     marker_color=[
-                        CARD_CATEGORIES["PULL"]["color"],
-                        CARD_CATEGORIES["PUSH"]["color"],
-                        CARD_CATEGORIES["WEIGHT"]["color"],
+                        CARD_CATEGORIES["MI_PIACE"]["color"],
+                        CARD_CATEGORIES["NON_MI_PIACE"]["color"],
                     ],
-                    text=[total_pull, total_push, total_weight],
+                    text=[total_like, total_dislike],
                     textposition="outside",
                 )
             ]
@@ -140,74 +134,51 @@ with tab_results:
         fig_summary.update_layout(
             height=300,
             margin=dict(l=20, r=20, t=20, b=20),
-            yaxis=dict(title="Classificazioni totali"),
+            yaxis=dict(title="Voti totali"),
         )
         st.plotly_chart(fig_summary, use_container_width=True)
 
-        # ── Distribuzione per carta (stacked bar) ──
+        # Distribuzione per carta
         st.subheader("Distribuzione per fenomeno")
 
         for card in PHENOMENON_CARDS:
             votes = [r["answers"].get(card["id"], "") for r in responses]
-            n_pull = votes.count("PULL")
-            n_push = votes.count("PUSH")
-            n_weight = votes.count("WEIGHT")
-            total = n_pull + n_push + n_weight
+            n_like = votes.count("MI_PIACE")
+            n_dislike = votes.count("NON_MI_PIACE")
+            total = n_like + n_dislike
 
             if total == 0:
                 continue
 
-            pct_pull = n_pull / total * 100
-            pct_push = n_push / total * 100
-            pct_weight = n_weight / total * 100
-
-            max_cat = max(
-                [("PULL", n_pull), ("PUSH", n_push), ("WEIGHT", n_weight)],
-                key=lambda x: x[1],
-            )
-            consensus = max_cat[1] / total >= 0.7
+            pct_like = n_like / total * 100
+            pct_dislike = n_dislike / total * 100
 
             col_info, col_chart = st.columns([1, 2])
             with col_info:
                 st.markdown(f"**{card['emoji']} {card['title']}**")
-                icon = CARD_CATEGORIES[max_cat[0]]["icon"]
-                label = max_cat[0]
-                if consensus:
-                    st.caption(f"{icon} **{label}** (consenso forte)")
+                if pct_like >= 70:
+                    st.caption(f"👍 **Piace** ({pct_like:.0f}%)")
+                elif pct_dislike >= 70:
+                    st.caption(f"👎 **Non piace** ({pct_dislike:.0f}%)")
                 else:
-                    st.caption(f"{icon} {label} (opinioni divise)")
+                    st.caption(f"Opinioni divise ({pct_like:.0f}% / {pct_dislike:.0f}%)")
             with col_chart:
                 fig_card = go.Figure()
                 fig_card.add_trace(
                     go.Bar(
-                        y=[""],
-                        x=[pct_pull],
-                        orientation="h",
-                        name="PULL",
-                        marker_color=CARD_CATEGORIES["PULL"]["color"],
-                        text=f"{n_pull}" if n_pull else "",
+                        y=[""], x=[pct_like], orientation="h",
+                        name="Mi piace",
+                        marker_color=CARD_CATEGORIES["MI_PIACE"]["color"],
+                        text=f"{n_like}" if n_like else "",
                         textposition="inside",
                     )
                 )
                 fig_card.add_trace(
                     go.Bar(
-                        y=[""],
-                        x=[pct_push],
-                        orientation="h",
-                        name="PUSH",
-                        marker_color=CARD_CATEGORIES["PUSH"]["color"],
-                        text=f"{n_push}" if n_push else "",
-                        textposition="inside",
-                    )
-                )
-                fig_card.add_trace(
-                    go.Bar(
-                        y=[""],
-                        x=[pct_weight],
-                        orientation="h",
-                        name="WEIGHT",
-                        marker_color=CARD_CATEGORIES["WEIGHT"]["color"],
-                        text=f"{n_weight}" if n_weight else "",
+                        y=[""], x=[pct_dislike], orientation="h",
+                        name="Non mi piace",
+                        marker_color=CARD_CATEGORIES["NON_MI_PIACE"]["color"],
+                        text=f"{n_dislike}" if n_dislike else "",
                         textposition="inside",
                     )
                 )
@@ -220,23 +191,22 @@ with tab_results:
                     showlegend=False,
                 )
                 st.plotly_chart(
-                    fig_card,
-                    use_container_width=True,
+                    fig_card, use_container_width=True,
                     key=f"dist_{card['id']}",
                 )
 
-        # ── Nota del facilitatore ──
+        # Nota facilitatore
         st.divider()
-        st.subheader("Nota del facilitatore")
+        st.subheader("Spunti di discussione")
         st.markdown(
-            "*Clicca su ogni fenomeno per vedere la classificazione suggerita dagli esperti.*"
+            "*Clicca su ogni fenomeno per approfondire e discuterne insieme.*"
         )
 
         for card in PHENOMENON_CARDS:
             suggested = card["suggested_category"]
             icon = CARD_CATEGORIES[suggested]["icon"]
             with st.expander(f"{card['emoji']} {card['title']}"):
-                st.markdown(f"**Classificazione suggerita:** {icon} **{suggested}**")
+                st.markdown(f"**Opinione degli esperti:** {icon} **{CARD_CATEGORIES[suggested]['label']}**")
                 st.markdown(card["description"])
 
                 votes = [r["answers"].get(card["id"], "") for r in responses]
@@ -246,13 +216,13 @@ with tab_results:
                     pct = n_match / total * 100
                     if pct >= 70:
                         st.success(
-                            f"Il {pct:.0f}% dei partecipanti concorda con la classificazione suggerita."
+                            f"Il {pct:.0f}% dei partecipanti la pensa come gli esperti."
                         )
                     elif pct >= 40:
                         st.warning(
-                            f"Solo il {pct:.0f}% concorda. Opinioni divise: ottimo spunto di discussione!"
+                            f"Solo il {pct:.0f}% concorda con gli esperti. Opinioni divise: discutiamone!"
                         )
                     else:
                         st.error(
-                            f"Solo il {pct:.0f}% concorda. La maggioranza ha una visione diversa: discutiamone!"
+                            f"Solo il {pct:.0f}% concorda. La maggioranza ha una visione diversa!"
                         )
