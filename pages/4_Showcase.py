@@ -315,101 +315,96 @@ if view == "📊 Vista Facilitatore (da proiettare)":
 # ── VISTA PARTECIPANTE ──────────────────────────────────────────────────────
 
 else:
-    if not groups_with_cards:
-        st.info("Nessun gruppo ha ancora completato la scenario card.")
-        st.stop()
-
     # ID votante
     if "voter_id" not in st.session_state:
         st.session_state.voter_id = str(uuid.uuid4())[:8]
 
     my_group = st.session_state.get("group_name", "")
 
-    st.markdown("""
-    <div class="info-banner">
-        <p><strong>Vota i lavori degli altri gruppi!</strong> Dopo le presentazioni,
-        vota per ogni categoria. Non puoi votare il tuo gruppo.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
+    # ── Votazione (solo se ci sono gruppi da votare) ──────────────────────
     votable = [name for name in groups_with_cards.keys() if name != my_group]
 
-    if not votable:
-        st.warning(
-            "Non ci sono altri gruppi da votare "
-            "(o il tuo gruppo e' l'unico con una scenario card)."
-        )
-        st.stop()
+    if votable:
+        st.markdown("""
+        <div class="info-banner">
+            <p><strong>Vota i lavori degli altri gruppi!</strong> Dopo le presentazioni,
+            vota per ogni categoria. Non puoi votare il tuo gruppo.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Mostra le scenario card in sintesi
-    st.subheader("Riepilogo Scenari")
-    for name in votable:
-        data = groups_with_cards[name]
-        card = data["scenario_card"]
-        with st.expander(f"**{name}** — {card['scenario_title_custom']}"):
-            st.markdown(f"*Tecnica: {data['scenario']['title']}*")
-            advisor_image = data.get("coach_image_url")
-            if advisor_image:
-                st.image(advisor_image, width=150)
-            st.markdown(f"**🔮 Futuro 2035:** {card['future_description']}")
-            col1, col2 = st.columns(2)
-            with col1:
+        st.subheader("Riepilogo Scenari")
+        for name in votable:
+            data = groups_with_cards[name]
+            card = data["scenario_card"]
+            with st.expander(f"**{name}** — {card['scenario_title_custom']}"):
+                st.markdown(f"*Tecnica: {data['scenario']['title']}*")
+                advisor_image = data.get("coach_image_url")
+                if advisor_image:
+                    st.image(advisor_image, width=150)
+                st.markdown(f"**🔮 Futuro 2035:** {card['future_description']}")
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown(
+                        f"**💼 Cosa cambia nel food:** {card['impact_on_enterprises']}"
+                    )
+                with col2:
+                    st.markdown(f"**🔑 Fattori chiave:** {card['key_factors']}")
                 st.markdown(
-                    f"**💼 Cosa cambia nel food:** {card['impact_on_enterprises']}"
+                    f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
                 )
-            with col2:
-                st.markdown(f"**🔑 Fattori chiave:** {card['key_factors']}")
-            st.markdown(
-                f"**💡 Raccomandazioni:** {card['strategic_recommendations']}"
+                if card.get("new_jobs_and_skills"):
+                    st.markdown(
+                        f"**🎓 Nuovi lavori/competenze:** {card['new_jobs_and_skills']}"
+                    )
+                if card.get("career_reflection"):
+                    st.markdown(
+                        f"**🚀 Il loro futuro:** {card['career_reflection']}"
+                    )
+
+        # Form voto
+        st.divider()
+        st.subheader("Esprimi il tuo voto")
+
+        with st.form("vote_form"):
+            v_convincente = st.selectbox(
+                "🎯 Scenario piu' CONVINCENTE",
+                options=votable,
+                format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
             )
-            if card.get("new_jobs_and_skills"):
-                st.markdown(
-                    f"**🎓 Nuovi lavori/competenze:** {card['new_jobs_and_skills']}"
+            v_originale = st.selectbox(
+                "🏆 Scenario piu' ORIGINALE",
+                options=votable,
+                format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
+            )
+            v_advisor = st.selectbox(
+                "🤖 Assistente AI MIGLIORE",
+                options=votable,
+                format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
+            )
+
+            submitted = st.form_submit_button(
+                "Invia il mio voto", use_container_width=True, type="primary"
+            )
+
+            if submitted:
+                state.cast_vote(
+                    st.session_state.voter_id,
+                    {
+                        "Scenario piu' convincente": v_convincente,
+                        "Scenario piu' originale": v_originale,
+                        "Assistente AI migliore": v_advisor,
+                    },
                 )
-            if card.get("career_reflection"):
-                st.markdown(
-                    f"**🚀 Il loro futuro:** {card['career_reflection']}"
+                st.success(
+                    "Voto registrato! Il facilitatore vedra' i risultati "
+                    "in tempo reale nella dashboard."
                 )
-
-    # Form voto
-    st.divider()
-    st.subheader("Esprimi il tuo voto")
-
-    with st.form("vote_form"):
-        v_convincente = st.selectbox(
-            "🎯 Scenario piu' CONVINCENTE",
-            options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
+                st.balloons()
+    else:
+        st.info(
+            "La sezione voto sara' disponibile quando ci saranno "
+            "piu' gruppi con scenario card completate."
         )
-        v_originale = st.selectbox(
-            "🏆 Scenario piu' ORIGINALE",
-            options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
-        )
-        v_advisor = st.selectbox(
-            "🤖 Assistente AI MIGLIORE",
-            options=votable,
-            format_func=lambda x: f"{x} — {groups_with_cards[x]['scenario_card']['scenario_title_custom']}",
-        )
-
-        submitted = st.form_submit_button(
-            "Invia il mio voto", use_container_width=True, type="primary"
-        )
-
-        if submitted:
-            state.cast_vote(
-                st.session_state.voter_id,
-                {
-                    "Scenario piu' convincente": v_convincente,
-                    "Scenario piu' originale": v_originale,
-                    "Assistente AI migliore": v_advisor,
-                },
-            )
-            st.success(
-                "Voto registrato! Il facilitatore vedra' i risultati "
-                "in tempo reale nella dashboard."
-            )
-            st.balloons()
 
     # ── Riflessione finale ────────────────────────────────────────────────
     st.divider()
