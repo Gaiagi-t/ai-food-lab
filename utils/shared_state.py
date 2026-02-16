@@ -170,7 +170,10 @@ class SharedState:
             }
 
 
+_STATE_VERSION = "v2"
+
+
 @st.cache_resource
-def get_shared_state() -> SharedState:
+def get_shared_state(version: str = _STATE_VERSION) -> SharedState:
     """Ritorna il singleton dello stato condiviso."""
     return SharedState()
