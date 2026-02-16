@@ -66,7 +66,7 @@ if section == "💬 Esplorazione con AI":
 
     st.markdown(
         "Chattate con l'AI per esplorare il vostro scenario. "
-        "Pensate a cosa avete classificato come PULL, PUSH e WEIGHT!"
+        "Pensate a cosa vi e' piaciuto e cosa no nella mappatura!"
     )
 
     # Mostra la chat history
